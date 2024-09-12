@@ -1,28 +1,16 @@
-# importare le librerie di spike
+# PROGRAMMA PER TESTARE LA FUNZIONE vaiDrittoPID
+
 from spike import PrimeHub, Motor, MotorPair, ColorSensor, Timer, wait_for_seconds, wait_until, hub
 
-
-# definire l'oggetto che rappresenta l'hub (il robot in sè)
 spike = PrimeHub()
-
-# configurazione del robot
+motoreSinistro = Motor('A')
+motoreDestro = Motor('B')
 movement_motors = MotorPair('A', 'B')
 smallMotorC = Motor('C')
 smallMotorD = Motor('D')
-colorSensor = ColorSensor('E')
-grandezza_ruote = float('x') #inserire il numero corretto (circonferenza), al momento (20 agosto) non ne ho la più pallida idea
-
-# costanti PID (da modificare in base al comportamento del robot)
-Kp = 0
-Ki = 0
-Kd = 0
-
-run_multithreading = True #variabile per l'esecuzione di più comandi contemporaneamente (es: muovere un braccio mentre il robot è in movimento)
-gyroValue = 0 #valore dell'angolo misurato dal giroscopio
+run_multithreading = True
 runSmall = True
 
-
-#classe contenente tutte le funzioni per i movimenti del robot
 class Movimenti:
     def __init__(self, spike, motoreSinistro, motoreDestro):
         """
@@ -92,68 +80,7 @@ class Movimenti:
                 loop = False
             
         self.movement_motors.stop()  # Assicuriamoci di fermare i motori alla fine
-    
-    def ciroscopio(self, angolo, verso, velocita=30):
-        """
-        Ruota il robot di un certo angolo in una direzione specifica.
-        
-        Parametri:
-        angolo: Angolo di rotazione del robot (in gradi)
-        verso: Direzione di rotazione (1 per destra, -1 per sinistra)
-        velocita: Velocità di rotazione (predefinita a 30)
-        """
-        
-        if verso not in [1, -1]:
-            raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")  # Verifica che il verso sia valido, altrimenti solleva un errore
-        
-        angolo_attuale = normalize_angle(hub.motion_sensor.get_yaw_angle())  # Ottiene l'angolo attuale del robot e lo normalizza
-        angolo_target = normalize_angle(angolo_attuale + (angolo * verso))  # Calcola l'angolo target aggiungendo l'angolo di rotazione desiderato
-        
-        while abs(normalize_angle(hub.motion_sensor.get_yaw_angle()) - angolo_target) > 2:  # Continua a ruotare finché non si è vicini all'angolo target
-            differenza = abs(normalize_angle(hub.motion_sensor.get_yaw_angle()) - angolo_target)  # Calcola la differenza tra l'angolo attuale e quello target
-            velocita_attuale = min(velocita, max(10, differenza / 2))  # Calcola la velocità di rotazione in base alla differenza, con un minimo di 10
-            
-            if verso == 1:  # Se il verso è 1, ruota a destra
-                self.movement_motors.start_tank_at_power(velocita_attuale, velocita_attuale * 3)  # Avvia i motori per ruotare a destra
-            else:  # Altrimenti, ruota a sinistra
-                self.movement_motors.start_tank_at_power(velocita_attuale * 3, -velocita_attuale)  # Avvia i motori per ruotare a sinistra
-        
-        self.movement_motors.stop()  # Ferma i motori una volta raggiunto l'angolo target
 
-    def equazione(self, equazione, distanza_max, velocità):
-        """
-        Esegui un movimento basato sull'equazione PID.
-        
-        Parametri:
-        equazione: equazione che descrive la traiettoria del robot.
-        distanza_max: Distanza massima che il robot deve percorrere.
-        velocità: Velocità di movimento del robot.
-        """
-        
-        global Kp
-        
-        self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
-        self.right_Startvalue = self.motoreDestro.get_degrees_counted()
-        x = ottieniDistanzaCompiuta(self)
-        
-        while True:  # Inizia un ciclo infinito
-            x = ottieniDistanzaCompiuta(self)  # Ottiene la distanza percorsa dal robot
-            target = equazione  # Calcola il valore target usando l'equazione fornita
-            angolo_attuale = hub.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot
-            errore = angolo_attuale - target  # Calcola l'errore tra l'angolo attuale e il target
-            correzione = (errore * Kp)  # Calcola la correzione usando il controllo proporzionale
-            self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)  # Avvia i motori con la velocità e la correzione calcolate
-            if x >= distanza_max:  # Se la distanza percorsa supera o eguaglia la distanza massima
-                break  # Esce dal ciclo
-        self.movement_motors.stop()  # Ferma i motori alla fine del movimento
-
-# Altre funzioni ausiliarie 
- 
-def resetGyroValue(): #Resetta il valore dell'angolo misurato dal giroscopio a 0
-    global gyroValue
-    hub.motion.yaw_pitch_roll(0)
-
-    gyroValue = 0
 
 def calcoloPID(velocità): #Calcola le costanti che regolano il PID in base alla velocità del robot
     '''
@@ -210,15 +137,6 @@ def ottieniDistanzaCompiuta(data):
 
     return distanzaCompiuta
 
-def normalize_angle(angle):
-    """Normalizza l'angolo per farlo rientrare nell'intervallo da -180 a 180 gradi."""
-    while angle > 180:
-        angle -= 360
-    while angle < -180:
-        angle += 360
-    return angle
-
-
 hub.motion.yaw_pitch_roll(0)
-mv = Movimenti(spike, 'A', 'B')
-
+mv = Movimenti(spike, motoreSinistro, motoreDestro)
+mv.vaiDrittoPID(1000, 80, multithreading=avviaMotore(5, 100, 'C'))
