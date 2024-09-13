@@ -40,7 +40,7 @@ class Movimenti:
 
             x = ottieniDistanzaCompiuta(self)  # Ottiene la distanza percorsa dal robot
             target = equazione  # Calcola il valore target usando l'equazione fornita
-            angolo_attuale = hub.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot
+            angolo_attuale = spike.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot
             errore = angolo_attuale - target  # Calcola l'errore tra l'angolo attuale e il target
             correzione = (errore * Kp)  # Calcola la correzione usando il controllo proporzionale
             self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)  # Avvia i motori con la velocità e la correzione calcolate

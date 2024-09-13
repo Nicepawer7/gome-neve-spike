@@ -41,7 +41,7 @@ class Movimenti:
         loop = True
         
         #variabili per il PID
-        target = hub.motion_sensor.get_yaw_angle()  #Impostare come angolo target, l'angolo corrente del robot (se il robot è orientato a 86 gradi, mentre va avanti dritto deve rimanere sempre a 86 gradi)
+        target = spike.motion_sensor.get_yaw_angle()  #Impostare come angolo target, l'angolo corrente del robot (se il robot è orientato a 86 gradi, mentre va avanti dritto deve rimanere sempre a 86 gradi)
         errore = 0
         erroreVecchio = 0
         integrale = 0
@@ -60,7 +60,7 @@ class Movimenti:
             if run_multithreading:  #eseguire una funzione simultaneamente se definita nel parametro
                 next(multithreading)
 
-            angolo = hub.motion_sensor.get_yaw_angle()     #In un loop, calcola l'angolo misurato dal giroscopio
+            angolo = spike.motion_sensor.get_yaw_angle()     #In un loop, calcola l'angolo misurato dal giroscopio
             distanzaCompiuta = ottieniDistanzaCompiuta(self) # e calcola la distanza percorsa grazie alla funzione definita sotto
             
             calcoloPID(velocità)  #calcola i valori delle costanti che regolano il PID Kp, Ki e Kd in base alla velocità

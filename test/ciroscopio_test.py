@@ -27,11 +27,11 @@ class Movimenti:
         if verso not in [1, -1]:
             raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")  # Verifica che il verso sia valido, altrimenti solleva un errore
         
-        angolo_attuale = normalize_angle(hub.motion_sensor.get_yaw_angle())  # Ottiene l'angolo attuale del robot e lo normalizza
+        angolo_attuale = normalize_angle(spike.motion_sensor.get_yaw_angle())  # Ottiene l'angolo attuale del robot e lo normalizza
         angolo_target = normalize_angle(angolo_attuale + (angolo * verso))  # Calcola l'angolo target aggiungendo l'angolo di rotazione desiderato
         
-        while abs(normalize_angle(hub.motion_sensor.get_yaw_angle()) - angolo_target) > 2:  # Continua a ruotare finché non si è vicini all'angolo target
-            differenza = abs(normalize_angle(hub.motion_sensor.get_yaw_angle()) - angolo_target)  # Calcola la differenza tra l'angolo attuale e quello target
+        while abs(normalize_angle(spike.motion_sensor.get_yaw_angle()) - angolo_target) > 2:  # Continua a ruotare finché non si è vicini all'angolo target
+            differenza = abs(normalize_angle(spike.motion_sensor.get_yaw_angle()) - angolo_target)  # Calcola la differenza tra l'angolo attuale e quello target
             velocita_attuale = min(velocita, max(10, differenza / 2))  # Calcola la velocità di rotazione in base alla differenza, con un minimo di 10
             
             if verso == 1:  # Se il verso è 1, ruota a destra

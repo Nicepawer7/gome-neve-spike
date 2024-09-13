@@ -53,7 +53,7 @@ class Movimenti:
         loop = True
         
         #variabili per il PID
-        target = hub.motion_sensor.get_yaw_angle()  #Impostare come angolo target, l'angolo corrente del robot (se il robot è orientato a 86 gradi, mentre va avanti dritto deve rimanere sempre a 86 gradi)
+        target = spike.motion_sensor.get_yaw_angle()  #Impostare come angolo target, l'angolo corrente del robot (se il robot è orientato a 86 gradi, mentre va avanti dritto deve rimanere sempre a 86 gradi)
         errore = 0
         erroreVecchio = 0
         integrale = 0
@@ -72,7 +72,7 @@ class Movimenti:
             if run_multithreading:  #eseguire una funzione simultaneamente se definita nel parametro
                 next(multithreading)
 
-            angolo = hub.motion_sensor.get_yaw_angle()     #In un loop, calcola l'angolo misurato dal giroscopio
+            angolo = spike.motion_sensor.get_yaw_angle()     #In un loop, calcola l'angolo misurato dal giroscopio
             distanzaCompiuta = ottieniDistanzaCompiuta(self) # e calcola la distanza percorsa grazie alla funzione definita sotto
             
             calcoloPID(velocità)  #calcola i valori delle costanti che regolano il PID Kp, Ki e Kd in base alla velocità
@@ -106,11 +106,11 @@ class Movimenti:
         if verso not in [1, -1]:
             raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")  # Verifica che il verso sia valido, altrimenti solleva un errore
         
-        angolo_attuale = normalize_angle(hub.motion_sensor.get_yaw_angle())  # Ottiene l'angolo attuale del robot e lo normalizza
+        angolo_attuale = normalize_angle(spike.motion_sensor.get_yaw_angle())  # Ottiene l'angolo attuale del robot e lo normalizza
         angolo_target = normalize_angle(angolo_attuale + (angolo * verso))  # Calcola l'angolo target aggiungendo l'angolo di rotazione desiderato
         
-        while abs(normalize_angle(hub.motion_sensor.get_yaw_angle()) - angolo_target) > 2:  # Continua a ruotare finché non si è vicini all'angolo target
-            differenza = abs(normalize_angle(hub.motion_sensor.get_yaw_angle()) - angolo_target)  # Calcola la differenza tra l'angolo attuale e quello target
+        while abs(normalize_angle(spike.motion_sensor.get_yaw_angle()) - angolo_target) > 2:  # Continua a ruotare finché non si è vicini all'angolo target
+            differenza = abs(normalize_angle(spike.motion_sensor.get_yaw_angle()) - angolo_target)  # Calcola la differenza tra l'angolo attuale e quello target
             velocita_attuale = min(velocita, max(10, differenza / 2))  # Calcola la velocità di rotazione in base alla differenza, con un minimo di 10
             
             if verso == 1:  # Se il verso è 1, ruota a destra
@@ -146,7 +146,7 @@ class Movimenti:
 
             x = ottieniDistanzaCompiuta(self)  # Ottiene la distanza percorsa dal robot
             target = equazione  # Calcola il valore target usando l'equazione fornita
-            angolo_attuale = hub.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot
+            angolo_attuale = spike.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot
             errore = angolo_attuale - target  # Calcola l'errore tra l'angolo attuale e il target
             correzione = (errore * Kp)  # Calcola la correzione usando il controllo proporzionale
             self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)  # Avvia i motori con la velocità e la correzione calcolate
@@ -228,4 +228,3 @@ def normalize_angle(angle):
 
 hub.motion.yaw_pitch_roll(0)
 mv = Movimenti(spike, 'A', 'B')
-
