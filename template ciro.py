@@ -31,8 +31,8 @@ class Movimenti:
             Il suo scopo principale è inizializzare gli attributi dell'oggetto con valori specificati al momento della creazione dell'oggetto.
         """
         self.spike = spike
-        self.motoreSinistro = Motor('A')
-        self.motoreDestro = Motor('B')
+        self.motoreSinistro = Motor(motoreSinistro)
+        self.motoreDestro = Motor(motoreDestro)
         self.movement_motors = movement_motors
 
     def vaiDrittoPID(self, distanza, velocità, multithreading = None):
