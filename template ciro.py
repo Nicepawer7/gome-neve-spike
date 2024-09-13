@@ -10,7 +10,7 @@ movement_motors = MotorPair('A', 'B')
 smallMotorC = Motor('C')
 smallMotorD = Motor('D')
 colorSensor = ColorSensor('E')
-grandezza_ruote = float('x') #inserire il numero corretto (circonferenza), al momento (20 agosto) non ne ho la più pallida idea
+#grandezza_ruote = float('x') #inserire il numero corretto (circonferenza), al momento (20 agosto) non ne ho la più pallida idea
 
 # costanti PID (da modificare in base al comportamento del robot)
 Kp = 0
@@ -120,7 +120,7 @@ class Movimenti:
         
         self.movement_motors.stop()  # Ferma i motori una volta raggiunto l'angolo target
 
-    def equazione(self, equazione, distanza_max, velocità):
+    def equazione(self, equazione, distanza_max, velocità, multithreading = None):
         """
         Esegui un movimento basato sull'equazione PID.
         
@@ -131,12 +131,19 @@ class Movimenti:
         """
         
         global Kp
+        global run_multithreading
+        
+        if multithreading == None:
+            run_multithreading = False
         
         self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
         self.right_Startvalue = self.motoreDestro.get_degrees_counted()
         x = ottieniDistanzaCompiuta(self)
         
         while True:  # Inizia un ciclo infinito
+            if run_multithreading:  #eseguire una funzione simultaneamente se definita nel parametro
+                next(multithreading)
+
             x = ottieniDistanzaCompiuta(self)  # Ottiene la distanza percorsa dal robot
             target = equazione  # Calcola il valore target usando l'equazione fornita
             angolo_attuale = hub.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot

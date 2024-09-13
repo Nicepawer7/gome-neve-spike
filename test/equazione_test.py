@@ -14,7 +14,7 @@ class Movimenti:
         self.motoreDestro = motoreDestro
         self.movement_motors = movement_motors
 
-    def equazione(self, equazione, distanza_max, velocità):
+    def equazione(self, equazione, distanza_max, velocità, multithreading = None):
         """
         Esegui un movimento basato sull'equazione PID.
         
@@ -25,12 +25,19 @@ class Movimenti:
         """
         
         global Kp
+        global run_multithreading
+        
+        if multithreading == None:
+            run_multithreading = False
         
         self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
         self.right_Startvalue = self.motoreDestro.get_degrees_counted()
         x = ottieniDistanzaCompiuta(self)
         
         while True:  # Inizia un ciclo infinito
+            if run_multithreading:  #eseguire una funzione simultaneamente se definita nel parametro
+                next(multithreading)
+
             x = ottieniDistanzaCompiuta(self)  # Ottiene la distanza percorsa dal robot
             target = equazione  # Calcola il valore target usando l'equazione fornita
             angolo_attuale = hub.motion_sensor.get_yaw_angle()  # Ottiene l'angolo attuale del robot
