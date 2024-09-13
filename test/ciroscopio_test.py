@@ -8,10 +8,10 @@ motoreDestro = Motor('B')
 movement_motors = MotorPair('A', 'B')
 
 class Movimenti:
-    def __init__(self, spike, motoreSinistro, motoreDestro):
+    def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
         self.spike = spike
-        self.motoreSinistro = motoreSinistro
-        self.motoreDestro = motoreDestro
+        self.motoreSinistro = Motor(motoreSinistro)
+        self.motoreDestro = Motor(motoreDestro)
         self.movement_motors = movement_motors
 
     def ciroscopio(self, angolo, verso, velocita=30):
@@ -52,5 +52,5 @@ def normalize_angle(angle):
 
 
 hub.motion.yaw_pitch_roll(0)
-mv = Movimenti(spike, motoreSinistro, motoreDestro)
+mv = Movimenti(spike, motoreSinistro, motoreDestro, movement_motors)
 mv.ciroscopio(90, 1)  # Ruota a destra di 90 gradi

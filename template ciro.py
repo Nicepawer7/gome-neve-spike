@@ -24,7 +24,7 @@ runSmall = True
 
 #classe contenente tutte le funzioni per i movimenti del robot
 class Movimenti:
-    def __init__(self, spike, motoreSinistro, motoreDestro):
+    def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
         """
             Il metodo __init__ in una classe Python è un metodo speciale chiamato costruttore. 
             Viene automaticamente invocato ogni volta che una nuova istanza (oggetto) della classe viene creata. 
@@ -297,5 +297,6 @@ def normalize_angle(angle):
     return angle
 
 
+
+mv = Movimenti(spike, 'A', 'B', movement_motors)
 resetGyroValue()
-mv = Movimenti(spike, 'A', 'B')

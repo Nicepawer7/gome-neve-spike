@@ -13,15 +13,15 @@ runSmall = True
 colorSensor = ColorSensor('E')
 
 class Movimenti:
-    def __init__(self, spike, motoreSinistro, motoreDestro):
+    def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
         """
             Il metodo __init__ in una classe Python è un metodo speciale chiamato costruttore. 
             Viene automaticamente invocato ogni volta che una nuova istanza (oggetto) della classe viene creata. 
             Il suo scopo principale è inizializzare gli attributi dell'oggetto con valori specificati al momento della creazione dell'oggetto.
         """
         self.spike = spike
-        self.motoreSinistro = Motor('A')
-        self.motoreDestro = Motor('B')
+        self.motoreSinistro = Motor(motoreSinistro)
+        self.motoreDestro = Motor(motoreDestro)
         self.movement_motors = movement_motors
 
     def seguiLinea(self, distanza, velocità, lato, multithreading = None):
@@ -143,7 +143,6 @@ def ottieniDistanzaCompiuta(data):
     return distanzaCompiuta
 
 hub.motion.yaw_pitch_roll(0)
-mv = Movimenti(spike, motoreSinistro, motoreDestro)
-
+mv = Movimenti(spike, motoreSinistro, motoreDestro, movement_motors)
 mv.seguiLinea(1000, 80, 'sinistra', multithreading=avviaMotore(5, 100, 'C'))
 
