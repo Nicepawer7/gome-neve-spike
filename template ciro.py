@@ -1,5 +1,6 @@
 # importare le librerie di spike
-from spike import PrimeHub, Motor, MotorPair, ColorSensor, Timer, wait_for_seconds, wait_until, hub
+from spike import PrimeHub, Motor, MotorPair, ColorSensor, Timer, wait_for_seconds, wait_until
+import hub, sys
 
 
 # definire l'oggetto che rappresenta l'hub (il robot in sè)
@@ -296,7 +297,76 @@ def normalize_angle(angle):
         angle += 360
     return angle
 
-
-
 mv = Movimenti(spike, 'A', 'B', movement_motors)
 resetGyroValue()
+
+# Programmi da modificare
+def programma1():
+    mv.vaiDrittoPID(1000, 80)
+
+def programma2():
+    mv.vaiDrittoPID(1000, 80)
+
+def programma3():
+    mv.vaiDrittoPID(1000, 80)
+
+def programma4():
+    mv.vaiDrittoPID(1000, 80)
+
+
+programmaSelezionato = 1
+main = True
+
+while main:
+    
+    if hub.right_button.is_pressed(): #press right button to cycle through programs. cycling back isn't supported yet, but we are working on reallocating the buttons in the file system
+        wait_for_seconds(0.15) #waiting prevents a single button press to be registered as multiple clicks
+        programmaSelezionato = programmaSelezionato + 1
+        hub.light_matrix.write(programmaSelezionato) #show current selcted program
+
+        if programmaSelezionato == 1:
+            hub.status_light.on('blue')
+        elif programmaSelezionato == 2:
+            hub.status_light.on('black')
+        elif programmaSelezionato == 3:
+            hub.status_light.on('white')
+        elif programmaSelezionato == 4:
+            hub.status_light.on('white')
+        #ricomincia il giro
+        if programmaSelezionato == 5:
+            programmaSelezionato = 1
+            hub.light_matrix.write(programmaSelezionato)
+            hub.status_light.on('blue')
+
+    #Program start
+    if hub.left_button.is_pressed():
+
+        if programmaSelezionato == 1:
+            hub.status_light.on("blue")
+            hub.light_matrix.show_image("DUCK")
+            programma1()
+            programmaSelezionato = 2
+            hub.light_matrix.write(programmaSelezionato)
+        elif programmaSelezionato == 2:
+            hub.status_light.on("black")
+            hub.light_matrix.show_image("DUCK")
+            programma2()
+            programmaSelezionato = 3
+            hub.light_matrix.write(programmaSelezionato)
+        elif programmaSelezionato == 3:
+            hub.status_light.on("white")
+            hub.light_matrix.show_image("DUCK")
+            programma3()
+            programmaSelezionato = 5
+            hub.light_matrix.write(programmaSelezionato)
+        elif programmaSelezionato == 4:
+            hub.status_light.on('white')
+            hub.light_matrix.show_image('DUCK')
+            programma4()
+            programmaSelezionato = 1
+            hub.light_matrix.write(programmaSelezionato)
+
+
+
+sys.exit("ended program successfully")
+
