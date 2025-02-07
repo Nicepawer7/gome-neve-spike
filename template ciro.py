@@ -230,8 +230,6 @@ class Movimenti:
 def resetGyroValue(): #Resetta il valore dell'angolo misurato dal giroscopio a 0
     global gyroValue
     hub.motion.yaw_pitch_roll(0)
-    spike.motion_sensor.reset_yaw()
-
     gyroValue = 0
 
 def calcoloPID(velocità): #Calcola le costanti che regolano il PID in base alla velocità del robot
@@ -299,6 +297,7 @@ def normalize_angle(angle):
 
 mv = Movimenti(spike, 'A', 'B', movement_motors)
 resetGyroValue()
+mv.vaiDrittoPID(1000, 80)
 
 # Programmi da modificare
 def programma1():

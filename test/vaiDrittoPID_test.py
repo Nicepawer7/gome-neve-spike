@@ -1,3 +1,5 @@
+# LEGO type:advanced slot:5 autostart
+
 # PROGRAMMA PER TESTARE LA FUNZIONE vaiDrittoPID
 
 from spike import PrimeHub, Motor, MotorPair, ColorSensor, Timer, wait_for_seconds, wait_until, hub
