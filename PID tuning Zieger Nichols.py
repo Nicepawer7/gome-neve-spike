@@ -79,7 +79,7 @@ class Movimenti:
             derivata = errore - erroreVecchio#imposta la derivata come la differenza tra l'errore attuale e l'errore precedente (la derivata tiene conto di come cambia l'errore nel tempo)
 
             correzione = (errore * Kp + integrale * Ki + derivata * Kd) #calcola la correzione
-            correzione = max(-100, min(correzione, 100))#limita la correzione entro i valori di -100 e 100
+            correzione = max(-100, min(corgit config --global sequence.editor "nano -w"rezione, 100))#limita la correzione entro i valori di -100 e 100
             print(Kp)
             time.sleep(1)
             Kp += Kp/3
