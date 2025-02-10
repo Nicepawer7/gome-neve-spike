@@ -9,5 +9,12 @@
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
 - [x] Creare il programma di raccoglimento dei dati
 - [x] Testare il funzionamento di tutti i metodi della classe 'Movimenti' tramite gli appositi file di test
+- [ ] Testare la versione migliorata del mission manager
 - [ ] Calibrare il pid con il metodo Zieger-Nichols
 - [ ] Aggiungere indicatori di direzione in base alla funzione
+
+## Idee:
+- Aggiungere sistema di accelerazione/decelerazione
+- Migliorare l'efficacia e la precisione delle curve
+- Migliorare il PID per permettere al robot di andare più veloce
+- Finire la funzione del machine learning
