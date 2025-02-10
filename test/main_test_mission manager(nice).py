@@ -3,7 +3,7 @@
 # correzzione i base alla batteria
 
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
-from hub import battery
+from hub import battery,light_matrix
 import sys, time, hub
 
 # definire l'oggetto che rappresenta l'hub (il robot in sè)
@@ -79,6 +79,7 @@ class Movimenti:
         self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
         self.right_Startvalue = self.motoreDestro.get_degrees_counted()
         distanzaCompiuta = ottieniDistanzaCompiuta(self)
+        light_matrix.show_image(27)
 
         while loop:
 
@@ -138,6 +139,7 @@ class Movimenti:
         target = (normalize_angle(angolo)) * verso
         gyroValue = spike.motion_sensor.get_yaw_angle()
         if verso == 1:
+            light_matrix.show_image(35)
             movement_motors.start_tank_at_power(30, -25)
             while gyroValue < target - 1:
                 gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -150,6 +152,7 @@ class Movimenti:
                 #print(gyroValue)
             movement_motors.stop()
         elif verso == -1:
+            light_matrix.show_image(36)
             movement_motors.start_tank_at_power(-25, 30)
             while gyroValue > target + 1:
                 gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -183,6 +186,7 @@ class Movimenti:
         target = (normalize_angle(angolo)) * verso
         gyroValue = spike.motion_sensor.get_yaw_angle()
         if verso == 1:
+            light_matrix.show_image(35)
             movement_motors.start_tank_at_power(25, -30)
             while gyroValue < target - 1:
                 gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -195,6 +199,7 @@ class Movimenti:
                 #print(gyroValue)
             movement_motors.stop()
         elif verso == -1:
+            light_matrix.show_image(36)
             movement_motors.start_tank_at_power(-30, 25)
             while gyroValue > target + 1:
                 gyroValue = spike.motion_sensor.get_yaw_angle()
