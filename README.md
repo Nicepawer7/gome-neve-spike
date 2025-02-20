@@ -14,6 +14,7 @@
 - [ ] aggiungere gestione async del bottone
 
 ## Idee:
+- Custom immage render
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
 - Migliorare l'efficacia e la precisione delle curve
