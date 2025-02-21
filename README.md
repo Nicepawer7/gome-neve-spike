@@ -10,10 +10,14 @@
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
 - [x] Creare il programma di raccoglimento dei dati
 - [x] Testare il funzionamento di tutti i metodi della classe 'Movimenti' tramite gli appositi file di test
-- [ ] Testare la versione migliorata del mission manager (rewrite inMain)
+- [ ] Rimuovere commenti per efficentare memoria
+- [ ] resettare spike
+- [ ] Testare la versione migliorata del mission manager (rewrite inMain, senza commenti)
+- [ ] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
 - [ ] aggiungere gestione async del bottone
 
 ## Idee:
+- Custom immage render
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
 - Migliorare l'efficacia e la precisione delle curve
