@@ -600,19 +600,22 @@ def race(program):
         mv.motoriMovimento(2500,10,100)
         return
     if program == 6:
-        mv.vaiDrittoPID(50, 50)
-        mv.ciroscopio(48, -1)
-        mv.vaiDrittoPID(1700, 50)
-        mv.ciroscopio(9,-1)
-        mv.ciroscopio(57,1)
-        mv.vaiDrittoPID(200,50)
-        mv.ciroscopio(85.0, 1)
-        mv.vaiDrittoPID(1200, 50)
-        mv.ciroscopio(13, 1)
-        mv.vaiDrittoPID(200, 50)
-        mv.motoriMovimento(330,0,-30)
-        mv.ciroscopio(86, 1)
-        mv.motoriMovimento(1300,-15,100)
+        mv.vaiDrittoPID(150, 50) # partenza
+        mv.ciroscopio(51, -1) # sinistra in area
+        mv.vaiDrittoPID(1400, 50) # fino a tridente
+        mv.ciroscopio(60,1)
+        mv.vaiDrittoPID(450,50)
+        # movement_motors.move(200,unit="degrees",steering=-80,speed=40)
+        mv.ciroscopio(72, 1) #  guarda lato destro
+        mv.vaiDrittoPID(350, 50) # fino a pre-pianta
+        smallMotorC.run_for_degrees(720, 100)
+        mv.vaiDrittoPID(300,40)
+        smallMotorC.run_for_degrees(180, -50)
+        mv.ciroscopio(11,1)
+        mv.vaiDrittoPID(350,50)
+        movement_motors.move(330, unit="degrees" , steering=0 , speed=-30)
+        mv.oipocsoric(80,1)
+        movement_motors.move(1500,unit="degrees", steering=-10, speed=100)
         return
     if program == 7:
         #10° da destra
