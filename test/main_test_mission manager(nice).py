@@ -1,7 +1,7 @@
 # LEGO type:standard slot:0
 
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
-from hub import battery,light_matrix
+from hub import battery
 import sys, time, hub
 
 spike = PrimeHub()
@@ -43,6 +43,7 @@ class Movimenti: #classe movimenti
         global Kp, Ki, Kd
         global run_multithreading, runSmall, stop
         if not stop:
+            print("Not stop")
             if multithreading == None:
                 run_multithreading = False
 
@@ -59,7 +60,6 @@ class Movimenti: #classe movimenti
             self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
             self.right_Startvalue = self.motoreDestro.get_degrees_counted()
             distanzaCompiuta = ottieniDistanzaCompiuta(self)
-            light_matrix.show_image(27)
             while loop:
                 if self.spike.left_button.is_pressed():
                     stop = True
@@ -89,7 +89,6 @@ class Movimenti: #classe movimenti
             multithreading = 0
             time.sleep(0.2)
             return
-
     def ciroscopio(self, angolo, verso):
 
         global gyroValue, stop
@@ -100,7 +99,6 @@ class Movimenti: #classe movimenti
             target = (normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
-                light_matrix.show_image(35)
                 movement_motors.start_tank_at_power(30, -25)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -109,7 +107,6 @@ class Movimenti: #classe movimenti
                         return
                 movement_motors.stop()
             elif verso == -1:
-                light_matrix.show_image(36)
                 movement_motors.start_tank_at_power(-25, 30)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -128,7 +125,6 @@ class Movimenti: #classe movimenti
             target = (normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
-                light_matrix.show_image(35)
                 movement_motors.start_tank_at_power(25, -30)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -137,7 +133,6 @@ class Movimenti: #classe movimenti
                         return
                 movement_motors.stop()
             elif verso == -1:
-                light_matrix.show_image(36)
                 movement_motors.start_tank_at_power(-30, 25)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
@@ -361,58 +356,6 @@ def equazione(self, equazione, distanza_max, velocità, multithreading = None):
     multithreading = 0
     return
 
-def seguiLinea(self, distanza, velocità, lato, multithreading = None):
-    global Kp, Ki, Kd, run_multithreading, runSmall, colorSensor, stop
-
-    if multithreading == None:
-        run_multithreading = False
-
-    errore = 0
-    erroreVecchio = 0
-    integrale = 0
-    derivata = 0
-    loop = True
-
-    if distanza < 0:
-        distanza = abs(distanza)
-
-    invert = 1
-    if lato == 'sinistra':
-        invert = 1
-    elif lato == 'destra':
-        invert = -1
-
-    self.left_Startvalue = self.leftMotor.get_degrees_counted()
-    self.right_Startvalue = self.rightMotor.get_degrees_counted()
-    distanzaCompiuta = ottieniDistanzaCompiuta(self)
-
-    while loop:
-        if self.spike.left_button.is_pressed():
-            stop = True
-            return
-
-        if run_multithreading:
-            next(multithreading)
-
-        distanzaCompiuta = ottieniDistanzaCompiuta(self)
-        calcoloPID(velocità)
-        erroreVecchio = errore
-        errore = colorSensor.get_reflected_light() - 50
-        integrale += errore
-        derivata = errore - erroreVecchio
-        correzione = (errore * Kp + integrale * Ki + derivata * Kd) * invert
-        correzione = max(-100, min(correzione, 100))
-        self.movement_motors.start_at_power(int(velocità), int(correzione))
-
-        if distanzaCompiuta >= distanza:
-            loop = False
-
-    self.movement_motors.stop()
-    run_multithreading = True
-    runSmall = True
-    multithreading = 0
-    return
-
 def motoriMovimento(self, distanza, sterzo, velocità):
     global stop
 
@@ -521,6 +464,8 @@ print(sys.version)
 
 def race(program):
     global stop
+    stop = False
+    print("Avvio missione " + str(program))
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)
@@ -545,7 +490,6 @@ def race(program):
         smallMotorD.run_for_degrees(50,100) #queste funzioni della libreria spike non si fermano automaticamente se la variabile stop = True, quindi ci vuole un controllo prima di eseguirle
         mv.motoriMovimento(2500,-10,-100) #la variabile stop non può mai diventare true perché la funzione è standard di spike, quindi è inutile fare il controllo
         return
-
     if program == 3:
         #alzare la vela della barca + squalo 4° fine da destra
         multithreading = avviaMotore(120, -50, 'D', spike)
@@ -562,14 +506,12 @@ def race(program):
         smallMotorD.run_for_degrees(90, -100)
         mv.motoriMovimento(1300,0,-100)
         return
-
     if program == 4:
         #2° fine da 2° grande da sinistra?
         mv.vaiDrittoPID(400, 50)
         time.sleep(0.2)
         mv.motoriMovimento(450,0,-100)
         return
-
     if program == 5:
         #5° da sinistra
     #2° linea fine
@@ -644,18 +586,18 @@ def race(program):
         mv.motoriMovimento(700,-40,90)
         mv.vaiDrittoPID(900,90)
         return
-main = True
 programma_selezionato = 1
 spike.status_light.on('green')
 spike.light_matrix.write(programma_selezionato)
-while main:
-    stop = True
+while True:
+    stop = False
     time.sleep(0.5)
     #selezione programma
+    print("Waiting for start")
     if spike.right_button.is_pressed():
         time.sleep(0.50)
         programma_selezionato += 1
-        print("Missione selezionata:" + programma_selezionato)
+        print("Missione selezionata:" + str(programma_selezionato))
         spike.light_matrix.write(programma_selezionato)
         if  programma_selezionato <= 8 and programma_selezionato >= 1:
             spike.status_light.on(colors[programma_selezionato-1])
@@ -667,10 +609,10 @@ while main:
     if spike.left_button.is_pressed():
         time.sleep(0.50) #se la variabile stop diventa True allora interrompi il ciclo di esecuzione
         spike.status_light.on(colors[programma_selezionato-1])
-        print("AVVIO il programma: " + programma_selezionato)
+        print("AVVIO il programma: " + str(programma_selezionato))
         race(programma_selezionato)
         programma_selezionato = 2
         spike.light_matrix.write(programma_selezionato)
-        stop = False
-        break
+print("Sto per esplodere")
+time.sleep(10)
 sys.exit()
