@@ -24,3 +24,7 @@
 - Migliorare l'efficacia e la precisione delle curve
 - Migliorare il PID per permettere al robot di andare più veloce
 - Finire la funzione del machine learning
+
+## Note di sviluppo/ info-source:
+- https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
+- https://github.com/smr99/lego-hub-tk
