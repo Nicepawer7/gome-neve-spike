@@ -11,9 +11,11 @@
 - [x] Creare il programma di raccoglimento dei dati
 - [x] Testare il funzionamento di tutti i metodi della classe 'Movimenti' tramite gli appositi file di test
 - [X] Rimuovere commenti per efficentare memoria
-- [ ] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
+- [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
+- [ ] far funzionare il bottone home
 - [ ] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
-- [ ] aggiungere gestione async del bottone
+- [ ] funzione sleep() per time.sleep() per migliore gestione
+- [ ] aggiungere gestione async del bottone(if possible)
 
 ## Idee:
 - multi file
@@ -24,5 +26,6 @@
 - Finire la funzione del machine learning
 
 ## Note di sviluppo/ info-source:
+- https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk
