@@ -1,4 +1,4 @@
-# LEGO type:standard slot:0
+#LEGO type:advanced slot:0 autostart
 
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
@@ -21,6 +21,15 @@ stop = False
 run_multithreading = True
 gyroValue = 0
 runSmall = True
+class bcolors:
+        BATTERY = '\033[32m'
+        BATTERY_LOW = '\033[31m'
+        ENDC = '\033[0m'
+
+if battery.voltage() < 8000:
+    print(bcolors.BATTERY_LOW + "batteria scarica: " + str(battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ bcolors.ENDC)
+else:
+    print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)
 
 class Movimenti: #classe movimenti
     def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
@@ -43,7 +52,7 @@ class Movimenti: #classe movimenti
         global Kp, Ki, Kd
         global run_multithreading, runSmall, stop
         if not stop:
-            print("Not stop")
+            print("Avvio vai dritto pid")
             if multithreading == None:
                 run_multithreading = False
 
@@ -88,7 +97,9 @@ class Movimenti: #classe movimenti
             runSmall = True
             multithreading = 0
             time.sleep(0.2)
+            print("Finito pid")
             return
+    
     def ciroscopio(self, angolo, verso):
 
         global gyroValue, stop
@@ -289,7 +300,7 @@ class Movimenti: #classe movimenti
             run_multithreading = False
         yield
 
-    def ottieniDistanzaCompiuta(data):
+    """def ottieniDistanzaCompiuta(data):
         global stop, spike
 
         if spike.left_button.is_pressed():
@@ -324,9 +335,8 @@ class Movimenti: #classe movimenti
         print(bcolors.BATTERY_LOW + "batteria scarica: " + str(
             battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n" + bcolors.ENDC)
     else:
-        print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)
+        print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)"""
 
-    print(sys.version)
 def equazione(self, equazione, distanza_max, velocità, multithreading = None):
     global Kp
     global run_multithreading, stop
@@ -448,21 +458,9 @@ def normalize_angle(angle):
         angle += 360
     return angle
 
-class bcolors:
-    BATTERY = '\033[32m'
-    BATTERY_LOW = '\033[31m'
-    ENDC = '\033[0m'
-
-mv = Movimenti(spike, 'A', 'B', movement_motors)
-
-if battery.voltage() < 8000:
-    print(bcolors.BATTERY_LOW + "batteria scarica: " + str(battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ bcolors.ENDC)
-else:
-    print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)
-
-print(sys.version)
 
 def race(program):
+    mv = Movimenti(spike, 'A', 'B', movement_motors)
     global stop
     stop = False
     print("Avvio missione " + str(program))
@@ -586,33 +584,35 @@ def race(program):
         mv.motoriMovimento(700,-40,90)
         mv.vaiDrittoPID(900,90)
         return
-programma_selezionato = 1
-spike.status_light.on('green')
-spike.light_matrix.write(programma_selezionato)
-while True:
-    stop = False
-    time.sleep(0.5)
-    #selezione programma
-    print("Waiting for start")
-    if spike.right_button.is_pressed():
-        time.sleep(0.50)
-        programma_selezionato += 1
-        print("Missione selezionata:" + str(programma_selezionato))
-        spike.light_matrix.write(programma_selezionato)
-        if  programma_selezionato <= 8 and programma_selezionato >= 1:
-            spike.status_light.on(colors[programma_selezionato-1])
-        elif programma_selezionato == 9:
-            programma_selezionato = 1
+    
+def main():
+    programma_selezionato = 1
+    spike.light_matrix.write(1)
+    spike.status_light.on(colors[0])
+    while True:
+        stop = False
+        #selezione programma
+        print("Waiting for start")
+        if spike.right_button.is_pressed():
+            time.sleep(0.10) #penso serva da debounce,potrebbe non servire
+            programma_selezionato += 1
+            print("Missione selezionata:" + str(programma_selezionato))
+            if programma_selezionato == 9:
+                programma_selezionato = 1
             spike.light_matrix.write(programma_selezionato)
             spike.status_light.on(colors[programma_selezionato-1])
-    #esecuzione programma
-    if spike.left_button.is_pressed():
-        time.sleep(0.50) #se la variabile stop diventa True allora interrompi il ciclo di esecuzione
-        spike.status_light.on(colors[programma_selezionato-1])
-        print("AVVIO il programma: " + str(programma_selezionato))
-        race(programma_selezionato)
-        programma_selezionato = 2
-        spike.light_matrix.write(programma_selezionato)
-print("Sto per esplodere")
-time.sleep(10)
+        #esecuzione programma
+        if spike.left_button.is_pressed():
+            time.sleep(0.10) #penso serva da debounce,potrebbe non servir
+            print("AVVIO il programma: " + str(programma_selezionato))
+            race(programma_selezionato)
+            programma_selezionato += 1
+            spike.light_matrix.write(programma_selezionato)
+            spike.status_light.on(colors[programma_selezionato-1])
+
+main()
+
+#fine-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+print("Normalmente questo messaggio non verrà mai visto")
 sys.exit()
