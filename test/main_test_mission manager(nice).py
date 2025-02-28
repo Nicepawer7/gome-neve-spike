@@ -1,4 +1,4 @@
-#LEGO type:advanced slot:0 autostart
+# LEGO type:advanced slot:0 autostart
 
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
@@ -72,6 +72,7 @@ class Movimenti: #classe movimenti
             while loop:
                 if self.spike.left_button.is_pressed():
                     stop = True
+                    self.movement_motors.stop()
                     return
                 if run_multithreading:
                     next(multithreading)
@@ -115,6 +116,7 @@ class Movimenti: #classe movimenti
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
                         stop = True
+                        movement_motors.stop()
                         return
                 movement_motors.stop()
             elif verso == -1:
@@ -123,6 +125,7 @@ class Movimenti: #classe movimenti
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
                         stop = True
+                        movement_motors.stop()
                         return
                 movement_motors.stop()
             time.sleep(0.2)
@@ -141,6 +144,7 @@ class Movimenti: #classe movimenti
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
                         stop = True
+                        movement_motors.stop()
                         return
                 movement_motors.stop()
             elif verso == -1:
@@ -149,6 +153,7 @@ class Movimenti: #classe movimenti
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
                         stop = True
+                        movement_motors.stop()
                         return
                 movement_motors.stop()
             time.sleep(0.2)
@@ -252,7 +257,7 @@ class Movimenti: #classe movimenti
         spike.motion_sensor.reset_yaw_angle()
         gyroValue = 0
 
-    def calcoloPID(velocità):
+    def calcoloPID(self, velocità):
         global Kp
         global Ki
         global Kd
@@ -274,7 +279,7 @@ class Movimenti: #classe movimenti
             Ki = 0.25
             Kd = 1.5
 
-    def avviaMotore(gradi, velocità, porta, spike):
+    def avviaMotore(self, gradi, velocità, porta, spike):
         global runSmall, run_multithreading, stop
 
         while runSmall:
@@ -465,11 +470,16 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
-        return
+       mv.vaiDrittoPID(30000,30)
+       #mv.ciroscopio(1200,1)
+       #mv.oipocsoric(120,1)
+       """ mv.vaiDrittoPID(1300, 65)
+        mv.motoriMovimento(1600,0,-90)"""
+       print("mission 1")
+       return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
+        print("qulo")
         multi = avviaMotore(80,20,"D", spike)
         mv.vaiDrittoPID(1450,50,multi)
         mv.ciroscopio(90,-1)
@@ -589,24 +599,25 @@ def main():
     programma_selezionato = 1
     spike.light_matrix.write(1)
     spike.status_light.on(colors[0])
+    print("Waiting for start")
     while True:
-        stop = False
         #selezione programma
-        print("Waiting for start")
         if spike.right_button.is_pressed():
-            time.sleep(0.10) #penso serva da debounce,potrebbe non servire
+            time.sleep(0.30)
             programma_selezionato += 1
-            print("Missione selezionata:" + str(programma_selezionato))
             if programma_selezionato == 9:
+                print("programma a 9,reset")
                 programma_selezionato = 1
+            print("Missione selezionata:" + str(programma_selezionato))
             spike.light_matrix.write(programma_selezionato)
             spike.status_light.on(colors[programma_selezionato-1])
         #esecuzione programma
         if spike.left_button.is_pressed():
-            time.sleep(0.10) #penso serva da debounce,potrebbe non servir
+            time.sleep(0.30)
             print("AVVIO il programma: " + str(programma_selezionato))
             race(programma_selezionato)
             programma_selezionato += 1
+            print("Concluso il programma: " + programma_selezionato)
             spike.light_matrix.write(programma_selezionato)
             spike.status_light.on(colors[programma_selezionato-1])
 
