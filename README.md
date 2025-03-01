@@ -28,7 +28,7 @@
 
 ## Note di sviluppo/ info-source:
 - Per threads codice di esempio:
--- import threading
+import threading
 import time
 import RPi.GPIO as GPIO  # Libreria per i GPIO di Raspberry Pi
 
