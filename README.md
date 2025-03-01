@@ -15,7 +15,7 @@
 - [ ] far funzionare il bottone home
 - [ ] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
 - [ ] funzione sleep() per time.sleep() per migliore gestione
-- [ ] aggiungere gestione async del bottone(if possible)
+- [ ] aggiungere gestione async/threading del bottone
 
 ## Idee:
 - multi file
