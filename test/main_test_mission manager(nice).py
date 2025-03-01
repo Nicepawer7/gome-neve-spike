@@ -1,12 +1,11 @@
 # LEGO type:advanced slot:0 autostart
 
+import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
-import sys, time, hub
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
-
 movement_motors = MotorPair('A', 'B')
 motoreSinistro = Motor('A')
 motoreDestro = Motor('B')
@@ -25,7 +24,6 @@ def skip():
     stop = True
     spike.light_matrix.show_image("NO")
     time.sleep(0.30)
-    return 
 
 class bcolors:
         BATTERY = '\033[32m'
@@ -260,6 +258,8 @@ class Movimenti: #classe movimenti
             spike.light_matrix.show_image("GO_UP")
         elif not stop and velocità < 0:
             spike.light_matrix.show_image("GO_DOWN")
+        else:
+            return
         movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
         return
 

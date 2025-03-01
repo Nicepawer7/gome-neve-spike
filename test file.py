@@ -166,7 +166,7 @@ class Movimenti: #classe movimenti
         x = ottieniDistanzaCompiuta(self)
         while True:
             if self.spike.left_button.is_pressed():
-                stop()
+                skip()
                 return
             if run_multithreading:
                 next(multithreading)
