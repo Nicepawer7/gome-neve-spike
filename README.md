@@ -15,10 +15,11 @@
 - [ ] far funzionare il bottone home
 - [ ] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
 - [ ] funzione sleep() per time.sleep() per migliore gestione
-- [ ] aggiungere gestione async/threading del bottone
+- [ ] aggiungere gestione async del bottone
 - [ ] pulire README.md
 
 ## Idee:
+- ~~ gestione bottone con threading ~~ non supportato
 - multi file
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
@@ -27,48 +28,6 @@
 - Finire la funzione del machine learning
 
 ## Note di sviluppo/ info-source:
-- Per threads codice di esempio:
-import threading
-import time
-import RPi.GPIO as GPIO  # Libreria per i GPIO di Raspberry Pi
-
-BUTTON_PIN = 17  # Sostituisci con il numero del pin a cui è collegato il pulsante
-stop_robot = False  # Variabile di controllo
-
- #Configurazione GPIO
-GPIO.setmode(GPIO.BCM)  
-GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PULLUP)  # Pull-up interno
-
-def azione_secondaria():
-    print("Azione secondaria in esecuzione...")
-    time.sleep(2)
-    print("Azione secondaria completata.")
-
-def muovi_robot():
-    global stop_robot
-    print("Il robot inizia a muoversi...")
-    azione_secondaria()
-
-    while not stop_robot:
-        print("Il robot sta ancora camminando...")
-        time.sleep(1)
-
-    print("Robot fermato.")
-
-# Avvia il movimento del robot in un thread separato
-thread_robot = threading.Thread(target=muovi_robot)
-thread_robot.start()
-
-# Funzione che attende la pressione del pulsante
-print("Premi il pulsante per fermare il robot...")
-while GPIO.input(BUTTON_PIN):  # Finché il pulsante NON è premuto (pull-up)
-    time.sleep(0.1)  # Controlla ogni 100 ms
-
-stop_robot = True  # Ferma il robot
-thread_robot.join()
-
-print("Fine programma.")
-GPIO.cleanup()  # Libera i pin GPIO
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk
