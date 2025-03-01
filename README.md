@@ -19,7 +19,7 @@
 - [ ] pulire README.md
 
 ## Idee:
-- ~~ gestione bottone con threading ~~ non supportato
+- ~~gestione bottone con threading~~ non supportato
 - multi file
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
