@@ -35,7 +35,7 @@ import RPi.GPIO as GPIO  # Libreria per i GPIO di Raspberry Pi
 BUTTON_PIN = 17  # Sostituisci con il numero del pin a cui è collegato il pulsante
 stop_robot = False  # Variabile di controllo
 
-# Configurazione GPIO
+ #Configurazione GPIO
 GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PULLUP)  # Pull-up interno
 
