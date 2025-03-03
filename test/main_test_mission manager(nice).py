@@ -9,8 +9,8 @@ colors = ('green','red','blue','yellow','orange','pink','violet','azure')
 movement_motors = MotorPair('A', 'B')
 motoreSinistro = Motor('A')
 motoreDestro = Motor('B')
-smallMotorC = Motor('C')
-smallMotorD = Motor('D')
+C = Motor('C')
+D = Motor('D')
 colorSensor = ColorSensor('E')
 Kp = 0
 Ki = 0
@@ -94,15 +94,16 @@ class Movimenti: #classe movimenti
                 erroreVecchio = errore
 
                 self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)
-
-                if distanzaCompiuta >= distanza:
+                if distanzaCompiuta == None:
+                    distanzaCompiuta = 0.1
+                elif distanzaCompiuta >= distanza:
                     loop = False
 
             self.movement_motors.stop()
             run_multithreading = True
             runSmall = True
             multithreading = 0
-            time.sleep(0.2)
+            wait(0.2)
             print("Finito pid")
             return
     
@@ -135,7 +136,7 @@ class Movimenti: #classe movimenti
                         movement_motors.stop()
                         return
                 movement_motors.stop()
-            time.sleep(0.2)
+            wait(0.2)
 
     def oipocsoric(self, angolo, verso):
         global gyroValue, stop
@@ -165,7 +166,7 @@ class Movimenti: #classe movimenti
                         movement_motors.stop()
                         return
                 movement_motors.stop()
-            time.sleep(0.2)
+            wait(0.2)
 
     def equazione(self, equazione, distanza_max, velocità, multithreading=None):
         global Kp
@@ -263,6 +264,25 @@ class Movimenti: #classe movimenti
         movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
         return
 
+    def muoviMotore(self,porta,gradi,velocità):
+        """
+        porta = (C,D)
+        gradi = distanza
+        velocità"""
+
+        if self.spike.left_button.is_pressed():
+            skip()
+            return
+        if not stop  and (porta == C or porta == D):
+            spike.light_matrix.show_image("TARGET")
+        elif not stop and (porta == motoreDestro or porta == motoreSinistro):
+            spike.light_matrix.show_image("PACMAN")
+        else:
+            return
+        porta.run_for_degrees(gradi,velocità)
+
+
+
 
 def resetGyroValue():
     global gyroValue, stop, spike
@@ -346,6 +366,16 @@ def normalize_angle(angle):
         angle += 360
     return angle
 
+def wait(timer):
+    if spike.left_button.is_pressed():
+        print("Chiamo skip")
+        skip()
+        return
+    if not stop:
+        spike.light_matrix.show_image("TORTOISE")
+        time.sleep(timer)
+    return
+
 
 def race(program):
     mv = Movimenti(spike, 'A', 'B', movement_motors)
@@ -355,7 +385,7 @@ def race(program):
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)
-        time.sleep(0.5)
+        wait(0.5)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -363,19 +393,18 @@ def race(program):
         mv.vaiDrittoPID(1450,50,multi)
         mv.ciroscopio(90,-1)
         mv.vaiDrittoPID(120,30)
-        smallMotorD.run_for_degrees(45,-20) #queste funzioni della libreria spike non si fermano automaticamente se la   stop = True, quindi ci vuole un controllo prima di eseguirle
-        mv.motoriMovimento(300,0,50) #la variabile stop non può mai diventare true perché la funzione è standard di spike, quindi è inutile fare il controllo
-        mv.oipocsoric(88,1)
+        mv.muoviMotore(D,45,-20) 
+        mv.motoriMovimento(300,0,50)
         multi = avviaMotore(45,20,"D", spike)
         mv.vaiDrittoPID(100,50,multi)
-        mv.motoriMovimento(200,0,-50) #queste funzioni della libreria spike non si fermano automaticamente se la variabile stop = True, quindi ci vuole un controllo prima di eseguirle
-        time.sleep(0.1)
-        smallMotorD.run_for_degrees(45,-20) #la variabile stop non può mai diventare true perché la funzione è standard di spike, quindi è inutile fare il controllo
+        mv.motoriMovimento(200,0,-50)
+        wait(0.1)
+        mv.muoviMotore(D,45,-20)
         mv.ciroscopio(5,-1)
         mv.vaiDrittoPID(150, 50)
         mv.ciroscopio(5,1)
-        smallMotorD.run_for_degrees(50,100) #queste funzioni della libreria spike non si fermano automaticamente se la variabile stop = True, quindi ci vuole un controllo prima di eseguirle
-        mv.motoriMovimento(2500,-10,-100) #la variabile stop non può mai diventare true perché la funzione è standard di spike, quindi è inutile fare il controllo
+        mv.muoviMotore(D,50,100) 
+        mv.motoriMovimento(2500,-10,-100) 
         return
     if program == 3:
         #alzare la vela della barca + squalo 4° fine da destra
@@ -384,19 +413,19 @@ def race(program):
         mv.ciroscopio(90, 1)
         mv.vaiDrittoPID(615 , 50)
         mv.motoriMovimento(200,0,-50)
-        motoreSinistro.run_for_degrees(630, 50)
+        mv.muoviMotore(motoreSinistro,630, 50)
         mv.ciroscopio(12, -1)
         mv.vaiDrittoPID(340, 50)
         #da questo momento in poi la variabile stop non può mai diventare true perché sono tutte funzioni standard di spike, quindi è inutile fare il controllo
-        smallMotorD.run_for_degrees(150, 80)
+        mv.muoviMotore(D,150, 80)
         mv.motoriMovimento(300,-70,-50)
-        smallMotorD.run_for_degrees(90, -100)
+        mv.muoviMotore(D,90, -100)
         mv.motoriMovimento(1300,0,-100)
         return
     if program == 4:
         #2° fine da 2° grande da sinistra?
         mv.vaiDrittoPID(400, 50)
-        time.sleep(0.2)
+        wait(0.2)
         mv.motoriMovimento(450,0,-100)
         return
     if program == 5:
@@ -404,28 +433,28 @@ def race(program):
     #2° linea fine
         mv.vaiDrittoPID(269, 50)
         mv.ciroscopio(88, 1)
-        time.sleep(0.1)
+        wait(0.1)
         mv.vaiDrittoPID(400, 50)
         multithreading = avviaMotore(40 , 40 , "D",spike)
         mv.vaiDrittoPID(900, 50, multithreading=multithreading)
-        time.sleep(0.2)
-        smallMotorD.run_for_degrees(65, -80)
+        wait(0.2)
+        mv.muoviMotore(D,65, -80)
         mv.ciroscopio(45, -1)
-        time.sleep(0.1)
+        wait(0.1)
         mv.vaiDrittoPID(100 , 75)
         mv.motoriMovimento(375,-45,-50)
         mv.motoriMovimento(50,0,-50)
-        smallMotorD.run_for_degrees(65, 60)
-        time.sleep(0.5)
+        mv.muoviMotore(D,65, 60)
+        wait(0.5)
         mv.vaiDrittoPID(700, 50)
-        smallMotorC.run_for_degrees(90, -70)
+        mv.muoviMotore(C,90, -70)
         mv.motoriMovimento(500,0,-15)
-        time.sleep(0.2)
-        smallMotorD.run_for_degrees(85, -80)
+        wait(0.2)
+        mv.muoviMotore(D,85, -80)
         mv.motoriMovimento(300,0,-100)
         mv.ciroscopio(30,-1)
         #mv.vaiDrittoPID(600,70)
-        time.sleep(0.5)
+        wait(0.5)
         mv.motoriMovimento(2500,10,100)
         return
     if program == 6:
@@ -448,13 +477,13 @@ def race(program):
         mv.vaiDrittoPID(1500, 50)
         mv.ciroscopio(40, 1)
         mv.vaiDrittoPID(250, 50)
-        smallMotorC.run_for_degrees(850, 100)
-        time.sleep(0.5)
-        smallMotorC.run_for_degrees(720, -100)
+        mv.muoviMotore(C,850, 100)
+        wait(0.5)
+        mv.muoviMotore(C,720, -100)
         mv.motoriMovimento(600,0,-75)
         mv.motoriMovimento(200,100,-50)
         mv.motoriMovimento(1500,0,-100)
-        time.sleep(2)
+        wait(2)
         mv.motoriMovimento(1000,0,-100)
         mv.vaiDrittoPID(850,100)
         return
@@ -464,8 +493,8 @@ def race(program):
         mv.vaiDrittoPID(1200,50,multithreading=multi)
         mv.ciroscopio(60,-1)
         mv.vaiDrittoPID(1030,75)
-        smallMotorD.run_for_degrees(-60,30)
-        time.sleep(1)
+        mv.muoviMotore(D,-60,30)
+        wait(1)
         mv.ciroscopio(52,-1)
         mv.vaiDrittoPID(520,50)
         mv.ciroscopio(38,1)
@@ -481,8 +510,10 @@ def main():
     print("Waiting for start")
     while True:
         #selezione programma
-        if spike.right_button.is_pressed():
-            time.sleep(0.30)
+        if spike.right_button.is_pressed() and spike.left_button.is_pressed():
+            sys.exit()
+        elif spike.right_button.is_pressed():
+            time.sleep(0.50)
             programma_selezionato += 1
             if programma_selezionato == 9:
                 print("programma a 9,reset")
@@ -491,8 +522,8 @@ def main():
             spike.light_matrix.write(programma_selezionato)
             spike.status_light.on(colors[programma_selezionato-1])
         #esecuzione programma
-        if spike.left_button.is_pressed():
-            time.sleep(0.30)
+        elif spike.left_button.is_pressed():
+            time.sleep(0.50)
             print("AVVIO il programma: " + str(programma_selezionato))
             race(programma_selezionato)
             programma_selezionato += 1

@@ -13,14 +13,14 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [ ] far funzionare il bottone home
-- [ ] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
-- [ ] funzione sleep() per time.sleep() per migliore gestione
+- [X] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
+- [X] funzione wait() per time.sleep() per migliore gestione
 - [ ] aggiungere gestione async del bottone
 - [ ] pulire README.md
 
 ## Idee:
 - ~~gestione bottone con threading~~ non supportato
-- multi file
+- multi file per migliore modularità
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
 - Migliorare l'efficacia e la precisione delle curve
