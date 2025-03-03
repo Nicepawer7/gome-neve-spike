@@ -13,6 +13,7 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [ ] far funzionare il bottone home
+- [ ] fare il merge nel main dopo i test in laboratorio
 - [X] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
 - [X] funzione wait() per time.sleep() per migliore gestione
 - [ ] aggiungere gestione async del bottone
