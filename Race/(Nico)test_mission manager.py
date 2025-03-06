@@ -394,7 +394,8 @@ def race(program):
         mv.ciroscopio(90,-1)
         mv.vaiDrittoPID(120,30)
         mv.muoviMotore(D,45,-20) 
-        mv.motoriMovimento(300,0,50)
+        mv.motoriMovimento(-300,0,50)
+        mv.oipocsoric(88,1)
         multi = avviaMotore(45,20,"D", spike)
         mv.vaiDrittoPID(100,50,multi)
         mv.motoriMovimento(200,0,-50)
@@ -404,7 +405,7 @@ def race(program):
         mv.vaiDrittoPID(150, 50)
         mv.ciroscopio(5,1)
         mv.muoviMotore(D,50,100) 
-        mv.motoriMovimento(2500,-10,-100) 
+        mv.motoriMovimento(2500,-10,-100)
         return
     if program == 3:
         #alzare la vela della barca + squalo 4° fine da destra
@@ -458,33 +459,34 @@ def race(program):
         mv.motoriMovimento(2500,10,100)
         return
     if program == 6:
-        mv.vaiDrittoPID(50, 50)
-        mv.ciroscopio(48, -1)
-        mv.vaiDrittoPID(1700, 50)
+        mv.vaiDrittoPID(50, 50) # partenza
+        mv.ciroscopio(48, -1) # sinistra in area
+        mv.vaiDrittoPID(1700, 50) # fino a tridente
         mv.ciroscopio(9,-1)
         mv.ciroscopio(57,1)
         mv.vaiDrittoPID(200,50)
-        mv.ciroscopio(85.0, 1)
-        mv.vaiDrittoPID(1200, 50)
-        mv.ciroscopio(13, 1)
-        mv.vaiDrittoPID(200, 50)
-        mv.motoriMovimento(330,0,-30)
-        mv.ciroscopio(86, 1)
+        # movement_motors.move(200,unit="degrees",steering=-80,speed=40)
+        mv.ciroscopio(85.0, 1) #  guarda lato destro
+        mv.vaiDrittoPID(1200, 50) # fino a pre-pianta
+        mv.ciroscopio(13, 1) # guarda pianta
+        mv.vaiDrittoPID(200, 50) # fino a pianto
+        mv.motoriMovimento(330,0,-30) # torna indietro
+        mv.ciroscopio(86, 1) # raccogli gamberi
         mv.motoriMovimento(1300,-15,100)
         return
     if program == 7:
         #10° da destra
-        mv.vaiDrittoPID(1500, 50)
-        mv.ciroscopio(40, 1)
-        mv.vaiDrittoPID(250, 50)
-        mv.muoviMotore(C,850, 100)
+        mv.vaiDrittoPID(1500, 50) # partenza
+        mv.ciroscopio(40, 1) # guarda balena
+        mv.vaiDrittoPID(250, 50) # scopa la balena
+        mv.muoviMotore(C,850, 100) #abbassa gamberetti
         wait(0.5)
-        mv.muoviMotore(C,720, -100)
-        mv.motoriMovimento(600,0,-75)
-        mv.motoriMovimento(200,100,-50)
-        mv.motoriMovimento(1500,0,-100)
+        mv.muoviMotore(C,720, -100) # alza
+        mv.motoriMovimento(600,0,-75) #torna indietro
+        mv.motoriMovimento(200,100,-50) #curva in retro
+        mv.motoriMovimento(1500,0,-100) #base 
         wait(2)
-        mv.motoriMovimento(1000,0,-100)
+        mv.motoriMovimento(1000,0,-100) #polipo
         mv.vaiDrittoPID(850,100)
         return
     if program == 8:
