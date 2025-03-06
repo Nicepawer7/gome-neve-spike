@@ -114,7 +114,7 @@ class Movimenti:
         run_multithreading = True
         runSmall = True
         multithreading = 0
-        time.sleep(0.2)
+        time.wait(0.2)
         return
 
     def ciroscopio(self, angolo, verso):

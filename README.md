@@ -11,14 +11,17 @@
 - [x] Creare il programma di raccoglimento dei dati
 - [x] Testare il funzionamento di tutti i metodi della classe 'Movimenti' tramite gli appositi file di test
 - [X] Rimuovere commenti per efficentare memoria
-- [ ] Concludere la versione migliorata del mission manager (rewrite inMain, senza commenti)
-- [ ] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
+- [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
+- [ ] far funzionare il bottone home
+- [ ] fare il merge nel main dopo i test in laboratorio
+- [X] risolvere "smallMotorD.run_for_degrees()" e "mv.motoriMovimento()"
+- [X] funzione wait() per time.sleep() per migliore gestione
 - [ ] aggiungere gestione async del bottone
+- [ ] pulire README.md
 
 ## Idee:
-- # LEGO type:advanced slot:5 autostart
-- multi file
-- Custom immage render
+- ~~gestione bottone con threading~~ non supportato
+- multi file per migliore modularità
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
 - Migliorare l'efficacia e la precisione delle curve
@@ -26,5 +29,6 @@
 - Finire la funzione del machine learning
 
 ## Note di sviluppo/ info-source:
+- https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk
