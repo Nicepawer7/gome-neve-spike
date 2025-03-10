@@ -1,9 +1,9 @@
 # Programmi e codici in python per spike prime
 ## Gome Neve FLL Team - Scuola Ladina di Fassa
 ## Uso:
-- Installare git, cursor e le estensioni necessarie (lego spike prime, python, codeStackr theme)
-- Clonare questa repo col comando 'git clone'
-- Modificare i file e aggiornare la repo coi comandi 'git add .' 'git commit -m "specificare modifica effettuata" ' 'git push origin main' e accedere con l'account di Ciro su github
+- Installare git, Visual Studio Code (o qualsiasi editor di codice che supporti le medesemime estensioni) e le estensioni necessarie (lego spike prime, python, codeStackr theme)
+- Clonare questa repo col comando 'git clone __link della pagina principale della repo__'
+- Modificare i file e aggiornare la repo coi comandi 'git add .' 'git commit -m "__modifica effettuata__" ' 'git push origin main' e accedere con l'account di un contributor su github
 ## Missioni:
 ### Da Fare/concludere:
 - 7
@@ -24,6 +24,7 @@
 - [X] funzione wait() per time.sleep() per migliore gestione
 - [ ] aggiungere gestione async del bottone
 - [ ] pulire README.md
+- [ ] ricontrollare progetto tecnico
 
 ## Idee:
 - ~~gestione bottone con threading~~ non supportato
