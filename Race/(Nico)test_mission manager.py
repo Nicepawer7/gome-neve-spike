@@ -459,34 +459,49 @@ def race(program):
         mv.motoriMovimento(2500,10,100)
         return
     if program == 6:
-        mv.vaiDrittoPID(50, 50) # partenza
-        mv.ciroscopio(48, -1) # sinistra in area
-        mv.vaiDrittoPID(1700, 50) # fino a tridente
-        mv.ciroscopio(9,-1)
-        mv.ciroscopio(57,1)
-        mv.vaiDrittoPID(200,50)
-        # movement_motors.move(200,unit="degrees",steering=-80,speed=40)
-        mv.ciroscopio(85.0, 1) #  guarda lato destro
-        mv.vaiDrittoPID(1200, 50) # fino a pre-pianta
-        mv.ciroscopio(13, 1) # guarda pianta
-        mv.vaiDrittoPID(200, 50) # fino a pianto
-        mv.motoriMovimento(330,0,-30) # torna indietro
-        mv.ciroscopio(86, 1) # raccogli gamberi
-        mv.motoriMovimento(1300,-15,100)
+        mv.vaiDrittoPID(150, 50)
+        mv.ciroscopio(51, -1)
+        mv.vaiDrittoPID(1400, 50) 
+        mv.ciroscopio(60,1)
+        mv.vaiDrittoPID(450,50)
+        mv.ciroscopio(72, 1)
+        mv.vaiDrittoPID(350, 50) 
+        mv.muoviMotore(C,720,100)
+        mv.vaiDrittoPID(390,40)
+        mv.muoviMotore(C,160,-50)
+        mv.ciroscopio(12,1)
+        mv.vaiDrittoPID(230,50)
+        mv.motoriMovimento(-500,10,30)
+        mv.ciroscopio(77, 1) 
+        mv.motoriMovimento(1500,-10, 100) 
+        """ mv.vaiDrittoPID(50, 50) # partenza
+            mv.ciroscopio(48, -1) # sinistra in area
+            mv.vaiDrittoPID(1700, 50) # fino a tridente
+            mv.ciroscopio(9,-1)
+            mv.ciroscopio(57,1)
+            mv.vaiDrittoPID(200,50)
+            # movement_motors.move(200,unit="degrees",steering=-80,speed=40)
+            mv.ciroscopio(85.0, 1) #  guarda lato destro
+            mv.vaiDrittoPID(1200, 50) # fino a pre-pianta
+            mv.ciroscopio(13, 1) # guarda pianta
+            mv.vaiDrittoPID(200, 50) # fino a pianto
+            mv.motoriMovimento(330,0,-30) # torna indietro
+            mv.ciroscopio(86, 1) # raccogli gamberi
+            mv.motoriMovimento(1300,-15,100)
+        """
         return
     if program == 7:
         #10° da destra
-        mv.vaiDrittoPID(1500, 50) # partenza
-        mv.ciroscopio(40, 1) # guarda balena
-        mv.vaiDrittoPID(250, 50) # scopa la balena
-        mv.muoviMotore(C,850, 100) #abbassa gamberetti
+        mv.vaiDrittoPID(1470, 50) # partenza
+        mv.ciroscopio(41, 1) # guarda balena
+        mv.vaiDrittoPID(200, 50)
+        mv.vaiDrittoPID(100, 20) # scopa la balena
         wait(0.5)
-        mv.muoviMotore(C,720, -100) # alza
         mv.motoriMovimento(600,0,-75) #torna indietro
-        mv.motoriMovimento(200,100,-50) #curva in retro
+        mv.motoriMovimento(200,90,-50) #curva in retro
         mv.motoriMovimento(1500,0,-100) #base 
-        wait(2)
-        mv.motoriMovimento(1000,0,-100) #polipo
+        wait(2.5)
+        mv.motoriMovimento(1100,0,-100) #polipo
         mv.vaiDrittoPID(850,100)
         return
     if program == 8:
@@ -513,7 +528,7 @@ def main():
     while True:
         #selezione programma
         if spike.right_button.is_pressed() and spike.left_button.is_pressed():
-            sys.exit()
+            break
         elif spike.right_button.is_pressed():
             time.sleep(0.50)
             programma_selezionato += 1
@@ -538,4 +553,3 @@ def main():
 main()
 
 print("Normalmente questo messaggio non verrà mai visto")
-sys.exit()
