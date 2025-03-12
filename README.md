@@ -28,6 +28,7 @@
 
 ## Idee:
 - ~~gestione bottone con threading~~ non supportato
+- controllo blocco vaidrittoPID()
 - multi file per migliore modularità
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
