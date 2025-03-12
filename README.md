@@ -6,10 +6,10 @@
 - Modificare i file e aggiornare la repo coi comandi 'git add .' 'git commit -m "__modifica effettuata__" ' 'git push origin main' e accedere con l'account di un contributor su github
 ## Missioni:
 ### Da Fare/concludere:
-- 7
 - 8
 ### Possibilmente da sistemare: 
-- 6
+- 6 (ricontrollare)
+- 7 (aggiungere vaso,o con curva o andando avanti)
 ## To-do list:
 - [X] Calibrare il pid con il metodo Zieger-Nichols (scartato)
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
