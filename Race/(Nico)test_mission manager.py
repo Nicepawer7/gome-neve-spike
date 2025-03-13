@@ -492,10 +492,10 @@ def race(program):
         return
     if program == 7:
         #10° da destra
-        mv.vaiDrittoPID(1470, 50) # partenza
-        mv.ciroscopio(41, 1) # guarda balena
-        mv.vaiDrittoPID(200, 50)
-        mv.vaiDrittoPID(100, 20) # scopa la balena
+        mv.vaiDrittoPID(1530, 50) # partenza
+        mv.ciroscopio(45, 1) # guarda balena
+        mv.vaiDrittoPID(360, 50)
+        mv.vaiDrittoPID(100, 30) # scopa la balena
         wait(0.5)
         mv.motoriMovimento(600,0,-75) #torna indietro
         mv.motoriMovimento(200,90,-50) #curva in retro

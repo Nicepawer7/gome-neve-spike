@@ -378,7 +378,18 @@ def wait(timer):
 mv = Movimenti(spike, 'A', 'B', movement_motors)
 #inizio -------------------------------------------------------------------------------------------------------------------------------------
 def main():
-    mv.vaiDrittoPID(1470, 50) # partenza
+    mv.vaiDrittoPID(1530, 50) # partenza
+    mv.ciroscopio(45, 1) # guarda balena
+    mv.vaiDrittoPID(360, 40)
+    mv.vaiDrittoPID(100, 20) # scopa la balena
+    wait(0.5)
+    mv.motoriMovimento(600,0,-75) #torna indietro
+    mv.motoriMovimento(200,90,-50) #curva in retro
+    mv.motoriMovimento(1500,0,-100) #base 
+    wait(2.5)
+    mv.motoriMovimento(1100,0,-100) #polipo
+    mv.vaiDrittoPID(850,100)
+    """mv.vaiDrittoPID(1470, 50) # partenza
     mv.muoviMotore(motoreDestro,-150,30)
     mv.muoviMotore(motoreSinistro,80,30)
     mv.muoviMotore(motoreDestro,-100,30)
@@ -391,7 +402,7 @@ def main():
     mv.motoriMovimento(1500,0,-100) #base 
     wait(2.5)
     mv.motoriMovimento(1100,0,-100) #polipo
-    mv.vaiDrittoPID(850,100)
+    mv.vaiDrittoPID(850,100)"""
     return
 
 main()
