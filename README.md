@@ -25,7 +25,7 @@
 ## Idee:
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ (scartato)
 - ~~gestione bottone con threading~~ non supportato
-- controllo blocco vaidrittoPID()
+- controllo anti-blocco vaidrittoPID()
 - multi file per migliore modularità
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Aggiungere sistema di accelerazione/decelerazione
