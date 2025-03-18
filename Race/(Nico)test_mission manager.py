@@ -385,7 +385,6 @@ def race(program):
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)
-        wait(0.5)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -404,7 +403,7 @@ def race(program):
         mv.ciroscopio(5,-1)
         mv.vaiDrittoPID(150, 50)
         mv.ciroscopio(5,1)
-        mv.muoviMotore(D,50,100) 
+        mv.muoviMotore(D,40,100) 
         mv.motoriMovimento(2500,-10,-100)
         return
     if program == 3:
@@ -442,7 +441,7 @@ def race(program):
         mv.muoviMotore(D,65, -80)
         mv.ciroscopio(45, -1)
         wait(0.1)
-        mv.vaiDrittoPID(100 , 75)
+        mv.vaiDrittoPID(130 , 75)
         mv.motoriMovimento(375,-45,-50)
         mv.motoriMovimento(50,0,-50)
         mv.muoviMotore(D,65, 60)
@@ -456,7 +455,9 @@ def race(program):
         mv.ciroscopio(30,-1)
         #mv.vaiDrittoPID(600,70)
         wait(0.5)
-        mv.motoriMovimento(2500,10,100)
+        mv.vaiDrittoPID(800,100)
+        mv.ciroscopio(40,1)
+        mv.vaiDrittoPID(2000,100)
         return
     if program == 6:
         mv.vaiDrittoPID(150, 50)
@@ -495,7 +496,7 @@ def race(program):
         mv.vaiDrittoPID(1530, 50) # partenza
         mv.ciroscopio(45, 1) # guarda balena
         mv.vaiDrittoPID(360, 50)
-        mv.vaiDrittoPID(100, 30) # scopa la balena
+        mv.vaiDrittoPID(80, 30) # scopa la balena
         wait(0.5)
         mv.motoriMovimento(600,0,-75) #torna indietro
         mv.motoriMovimento(200,90,-50) #curva in retro

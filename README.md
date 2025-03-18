@@ -8,6 +8,7 @@
 ### Da Fare/concludere:
 - 8
 ### Possibilmente da sistemare: 
+- 5 (travel a base)
 - 6 (ricontrollare)
 - 7 (aggiungere vaso,o con curva o andando avanti)
 ## To-do list:
