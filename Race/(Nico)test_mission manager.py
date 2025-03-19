@@ -90,6 +90,7 @@ class Movimenti: #classe movimenti
                 derivata = errore - erroreVecchio
 
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
+                print("Correzione Base: " + str(correzione))
                 correzione = max(-100, min(correzione, 100))
                 erroreVecchio = errore
 
@@ -467,36 +468,22 @@ def race(program):
         mv.vaiDrittoPID(450,50)
         mv.ciroscopio(72, 1)
         mv.vaiDrittoPID(350, 50) 
-        mv.muoviMotore(C,720,100)
+        mv.muoviMotore(C,-720,100)
         mv.vaiDrittoPID(390,40)
         mv.muoviMotore(C,160,-50)
         mv.ciroscopio(12,1)
         mv.vaiDrittoPID(230,50)
-        mv.motoriMovimento(-500,10,30)
-        mv.ciroscopio(77, 1) 
-        mv.motoriMovimento(1500,-10, 100) 
-        """ mv.vaiDrittoPID(50, 50) # partenza
-            mv.ciroscopio(48, -1) # sinistra in area
-            mv.vaiDrittoPID(1700, 50) # fino a tridente
-            mv.ciroscopio(9,-1)
-            mv.ciroscopio(57,1)
-            mv.vaiDrittoPID(200,50)
-            # movement_motors.move(200,unit="degrees",steering=-80,speed=40)
-            mv.ciroscopio(85.0, 1) #  guarda lato destro
-            mv.vaiDrittoPID(1200, 50) # fino a pre-pianta
-            mv.ciroscopio(13, 1) # guarda pianta
-            mv.vaiDrittoPID(200, 50) # fino a pianto
-            mv.motoriMovimento(330,0,-30) # torna indietro
-            mv.ciroscopio(86, 1) # raccogli gamberi
-            mv.motoriMovimento(1300,-15,100)
-        """
+        mv.motoriMovimento(-400,10,30)
+        mv.ciroscopio(80, 1) 
+        mv.motoriMovimento(1500,-11, 100)            
         return
     if program == 7:
         #10° da destra
-        mv.vaiDrittoPID(1530, 50) # partenza
+        mv.vaiDrittoPID(1730, 50) # partenza
+        mv.motoriMovimento(-250,0,30)
         mv.ciroscopio(45, 1) # guarda balena
         mv.vaiDrittoPID(360, 50)
-        mv.vaiDrittoPID(80, 30) # scopa la balena
+        mv.vaiDrittoPID(70, 25) # scopa la balena
         wait(0.5)
         mv.motoriMovimento(600,0,-75) #torna indietro
         mv.motoriMovimento(200,90,-50) #curva in retro
@@ -508,17 +495,18 @@ def race(program):
     if program == 8:
         #2°  dalla 2 linea grande
         multi = avviaMotore(5, -50, "D", spike)
-        mv.vaiDrittoPID(1200,50,multithreading=multi)
+        mv.vaiDrittoPID(1150,50,multithreading=multi)
         mv.ciroscopio(60,-1)
-        mv.vaiDrittoPID(1030,75)
-        mv.muoviMotore(D,-60,30)
+        mv.vaiDrittoPID(1150,60)
+        mv.muoviMotore(D,-50,30)
         wait(1)
-        mv.ciroscopio(52,-1)
-        mv.vaiDrittoPID(520,50)
-        mv.ciroscopio(38,1)
-        mv.vaiDrittoPID(550,60)
-        mv.motoriMovimento(700,-40,90)
-        mv.vaiDrittoPID(900,90)
+        mv.ciroscopio(61,-1)
+        mv.vaiDrittoPID(400,50)
+        mv.ciroscopio(32,1)
+        mv.vaiDrittoPID(200,40)
+        mv.ciroscopio(34,1)
+        mv.motoriMovimento(-350,0,60)
+        mv.ciroscopio(110,1)
         return
     
 def main():

@@ -6,11 +6,10 @@
 - Modificare i file e aggiornare la repo coi comandi 'git add .' 'git commit -m "__modifica effettuata__" ' 'git push origin main' e accedere con l'account di un contributor su github
 ## Missioni:
 ### Da Fare/concludere:
-- 8
-### Possibilmente da sistemare: 
 - 5 (travel a base)
 - 6 (ricontrollare)
-- 7 (aggiungere vaso,o con curva o andando avanti)
+### Possibilmente da sistemare: 
+
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
@@ -18,6 +17,7 @@
 - [x] Testare il funzionamento di tutti i metodi della classe 'Movimenti' tramite gli appositi file di test
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
+- [ ] Ricontrollare ogni missione
 - [ ] far funzionare il bottone home
 - [ ] aggiungere gestione async del bottone
 - [ ] pulire README.md
