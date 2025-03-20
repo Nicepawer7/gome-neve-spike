@@ -90,7 +90,6 @@ class Movimenti: #classe movimenti
                 derivata = errore - erroreVecchio
 
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
-                print("Correzione Base: " + str(correzione))
                 correzione = max(-100, min(correzione, 100))
                 erroreVecchio = errore
 
@@ -432,33 +431,27 @@ def race(program):
     if program == 5:
         #5° da sinistra
     #2° linea fine
-        mv.vaiDrittoPID(269, 50)
-        mv.ciroscopio(88, 1)
-        wait(0.1)
-        mv.vaiDrittoPID(400, 50)
+        mv.muoviMotore(D,40 , -80)
+        mv.vaiDrittoPID(320, 40)
+        mv.ciroscopio(90, 1)
+        mv.vaiDrittoPID(330, 50)
         multithreading = avviaMotore(40 , 40 , "D",spike)
-        mv.vaiDrittoPID(900, 50, multithreading=multithreading)
-        wait(0.2)
+        mv.vaiDrittoPID(1100, 50, multithreading=multithreading)
         mv.muoviMotore(D,65, -80)
-        mv.ciroscopio(45, -1)
-        wait(0.1)
-        mv.vaiDrittoPID(130 , 75)
-        mv.motoriMovimento(375,-45,-50)
-        mv.motoriMovimento(50,0,-50)
+        mv.ciroscopio(58, -1)
+        mv.motoriMovimento(170,0,-30)
+        mv.ciroscopio(51,1) #post squalo
+        mv.motoriMovimento(250,0,-60)
         mv.muoviMotore(D,65, 60)
-        wait(0.5)
-        mv.vaiDrittoPID(700, 50)
+        mv.vaiDrittoPID(600, 50)
         mv.muoviMotore(C,90, -70)
         mv.motoriMovimento(500,0,-15)
-        wait(0.2)
         mv.muoviMotore(D,85, -80)
-        mv.motoriMovimento(300,0,-100)
-        mv.ciroscopio(30,-1)
-        #mv.vaiDrittoPID(600,70)
-        wait(0.5)
-        mv.vaiDrittoPID(800,100)
-        mv.ciroscopio(40,1)
-        mv.vaiDrittoPID(2000,100)
+        mv.motoriMovimento(200,0,-100)
+        mv.ciroscopio(20,-1)
+        mv.vaiDrittoPID(900,70)
+        mv.ciroscopio(35,1)
+        mv.vaiDrittoPID(1500,90)
         return
     if program == 6:
         mv.vaiDrittoPID(150, 50)
@@ -479,11 +472,24 @@ def race(program):
         return
     if program == 7:
         #10° da destra
+        """
         mv.vaiDrittoPID(1730, 50) # partenza
         mv.motoriMovimento(-250,0,30)
         mv.ciroscopio(45, 1) # guarda balena
         mv.vaiDrittoPID(360, 50)
         mv.vaiDrittoPID(70, 25) # scopa la balena
+        wait(0.5)
+        mv.motoriMovimento(600,0,-75) #torna indietro
+        mv.motoriMovimento(200,90,-50) #curva in retro
+        mv.motoriMovimento(1500,10,-100) #base 
+        wait(2.5)
+        mv.motoriMovimento(1100,0,-80) #polipo
+        mv.vaiDrittoPID(850,100)"""
+        mv.vaiDrittoPID(1730, 50) # partenza
+        mv.motoriMovimento(-250,0,30)
+        mv.ciroscopio(45, 1) # guarda balena
+        mv.vaiDrittoPID(360, 50)
+        mv.motoriMovimento(70,0, 25) # scopa la balena
         wait(0.5)
         mv.motoriMovimento(600,0,-75) #torna indietro
         mv.motoriMovimento(200,90,-50) #curva in retro
