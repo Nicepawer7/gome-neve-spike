@@ -5,9 +5,9 @@
 - Clonare questa repo col comando 'git clone __link della pagina principale della repo__'
 - Modificare i file e aggiornare la repo coi comandi 'git add .' 'git commit -m "__modifica effettuata__" ' 'git push origin main' e accedere con l'account di un contributor su github
 ## Missioni:
+
 ### Da Fare/concludere:
-- 5 (travel a base)
-- 6 (ricontrollare)
+
 ### Possibilmente da sistemare: 
 
 ## To-do list:
