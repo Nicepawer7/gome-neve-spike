@@ -17,15 +17,12 @@
 - [x] Testare il funzionamento di tutti i metodi della classe 'Movimenti' tramite gli appositi file di test
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
-- [ ] Ricontrollare ogni missione
-- [ ] far funzionare il bottone home
-- [ ] aggiungere gestione async del bottone
-- [ ] pulire README.md
-- [ ] ricontrollare progetto tecnico
+- [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
 
 ## Idee:
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ (scartato)
 - ~~gestione bottone con threading~~ non supportato
+- aggiungere gestione async del bottone
 - controllo anti-blocco vaidrittoPID()
 - multi file per migliore modularità
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
