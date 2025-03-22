@@ -4,7 +4,8 @@
 - Installare git, Visual Studio Code (o qualsiasi editor di codice che supporti le medesemime estensioni) e le estensioni necessarie (lego spike prime, python)
 - Clonare questa repo col comando 'git clone __https://github.com/Nicepawer7/gome-neve-spike__'
 - Modificare i file e aggiornare la repo coi comandi'git commit -a -m "__descrizione della modifica effettuata__" ' e 'git push origin main' e accedere con l'account di un contributor su github
-## Missioni:
+- Per motivi di memoria sono stati rimmossi i comenti dalla branch __main__, per leggerli è necessario aprire la branch __con_commenti__ e aprire il file necessario.
+## Missioni da Fare:
 
 ### Da Fare/concludere:
 
