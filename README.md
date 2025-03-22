@@ -1,9 +1,9 @@
 # Programmi e codici in python per spike prime
 ## Gome Neve FLL Team - Scuola Ladina di Fassa
 ## Uso:
-- Installare git, Visual Studio Code (o qualsiasi editor di codice che supporti le medesemime estensioni) e le estensioni necessarie (lego spike prime, python, codeStackr theme)
-- Clonare questa repo col comando 'git clone __link della pagina principale della repo__'
-- Modificare i file e aggiornare la repo coi comandi 'git add .' 'git commit -m "__modifica effettuata__" ' 'git push origin main' e accedere con l'account di un contributor su github
+- Installare git, Visual Studio Code (o qualsiasi editor di codice che supporti le medesemime estensioni) e le estensioni necessarie (lego spike prime, python)
+- Clonare questa repo col comando 'git clone __https://github.com/Nicepawer7/gome-neve-spike__'
+- Modificare i file e aggiornare la repo coi comandi'git commit -a -m "__descrizione della modifica effettuata__" ' e 'git push origin main' e accedere con l'account di un contributor su github
 ## Missioni:
 
 ### Da Fare/concludere:
