@@ -1,4 +1,4 @@
-# LEGO type:advanced slot:2
+# LEGO type:advanced slot:0
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
