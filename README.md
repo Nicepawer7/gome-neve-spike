@@ -38,4 +38,4 @@
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk
-- https://github.com/gpdaniels/spike-prime
+- https://github.com/gpdaniels/spike-prime simulatore hardware spike e firmware
