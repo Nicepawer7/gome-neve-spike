@@ -19,6 +19,7 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
+- [ ] Correggere il PID e ricalibrarlo
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
