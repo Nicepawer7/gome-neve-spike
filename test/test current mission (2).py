@@ -1,4 +1,5 @@
-# LEGO type:advanced slot:0
+# LEGO type:advanced slot:0 autostart
+
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
@@ -14,15 +15,12 @@ colorSensor = ColorSensor('E')
 Kp = 0
 Ki = 0
 Kd = 0
-programma_selezionato = 1
 stop = False
 run_multithreading = True
 gyroValue = 0
 runSmall = True
 def skip():
     global stop
-    global programma_selezionato
-    programma_selezionato -= 1
     stop = True
     spike.light_matrix.show_image("NO")
     time.sleep(0.30)
@@ -377,65 +375,11 @@ def wait(timer):
         spike.light_matrix.show_image("TORTOISE")
         time.sleep(timer)
     return
-
-
-def race(program):
-    mv = Movimenti(spike, 'A', 'B', movement_motors)
-    global stop
-    stop = False
-    print("Avvio missione " + str(program))
-    if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
-        sys.exit("gay")
-        return
-    if program == 2:
-        #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
-        multi = avviaMotore(80,20,"D", spike)
-        mv.vaiDrittoPID(1450,50,multi)
-        mv.ciroscopio(90,-1)
-        mv.vaiDrittoPID(120,30)
-        mv.muoviMotore(D,45,-20) 
-        mv.motoriMovimento(-300,0,50)
-        mv.oipocsoric(88,1)
-        multi = avviaMotore(45,20,"D", spike)
-        mv.vaiDrittoPID(100,50,multi)
-        mv.motoriMovimento(200,0,-50)
-        wait(0.1)
-        mv.muoviMotore(D,45,-20)
-        mv.ciroscopio(5,-1)
-        mv.vaiDrittoPID(150, 50)
-        mv.ciroscopio(5,1)
-        mv.muoviMotore(D,40,100) 
-        mv.motoriMovimento(2500,-10,-100)
-        return
-    if program == 3:
-        #alzare la vela della barca + squalo 4° fine da destra
-        multithreading = avviaMotore(120, -50, 'D', spike)
-        mv.vaiDrittoPID(1520, 50, multithreading=multithreading)
-        mv.ciroscopio(90, 1)
-        mv.vaiDrittoPID(615 , 50)
-        mv.motoriMovimento(200,0,-50)
-        mv.muoviMotore(motoreSinistro,630, 50)
-        mv.ciroscopio(12, -1)
-        mv.vaiDrittoPID(340, 50)
-        #da questo momento in poi la variabile stop non può mai diventare true perché sono tutte funzioni standard di spike, quindi è inutile fare il controllo
-        mv.muoviMotore(D,150, 80)
-        mv.motoriMovimento(300,-70,-50)
-        mv.muoviMotore(D,90, -100)
-        mv.motoriMovimento(1300,0,-100)
-        return
-    if program == 4:
-        #2° fine da 2° grande da sinistra?
-        mv.vaiDrittoPID(400, 50)
-        wait(0.2)
-        mv.motoriMovimento(450,0,-100)
-        return
-    if program == 5:
-        #5° da sinistra
-    #2° linea fine
-        mv.muoviMotore(D,40 , -80)
-        mv.vaiDrittoPID(320, 40)
+mv = Movimenti(spike, 'A', 'B', movement_motors)
+#inizio -------------------------------------------------------------------------------------------------------------------------------------
+def main():
+        multithreading = avviaMotore(40 , -80 , "D",spike)
+        mv.vaiDrittoPID(320, 40,multithreading=multithreading)
         mv.ciroscopio(90, 1)
         mv.vaiDrittoPID(330, 50)
         multithreading = avviaMotore(40 , 40 , "D",spike)
@@ -455,56 +399,9 @@ def race(program):
         mv.vaiDrittoPID(900,70)
         mv.ciroscopio(35,1)
         mv.vaiDrittoPID(1500,90)
-        return
-    if program == 6:
-        mv.vaiDrittoPID(150, 50)
-        mv.ciroscopio(51, -1)
-        mv.vaiDrittoPID(1400, 50) 
-        mv.ciroscopio(60,1)
-        mv.vaiDrittoPID(450,50)
-        mv.ciroscopio(72, 1)
-        mv.vaiDrittoPID(350, 50) 
-        mv.muoviMotore(C,-720,100)
-        mv.vaiDrittoPID(390,40)
-        mv.muoviMotore(C,160,-50)
-        mv.ciroscopio(12,1)
-        mv.vaiDrittoPID(230,50)
-        mv.motoriMovimento(-400,10,30)
-        mv.ciroscopio(80, 1) 
-        mv.motoriMovimento(1500,-11, 100)            
-        return
-    if program == 7:
-        #10° da destra
-        """
-        mv.vaiDrittoPID(1730, 50) # partenza
-        mv.motoriMovimento(-250,0,30)
-        mv.ciroscopio(45, 1) # guarda balena
-        mv.vaiDrittoPID(360, 50)
-        mv.vaiDrittoPID(70, 25) # scopa la balena
-        wait(0.5)
-        mv.motoriMovimento(600,0,-75) #torna indietro
-        mv.motoriMovimento(200,90,-50) #curva in retro
-        mv.motoriMovimento(1500,10,-100) #base 
-        wait(2.5)
-        mv.motoriMovimento(1100,0,-80) #polipo
-        mv.vaiDrittoPID(850,100)"""
-        mv.vaiDrittoPID(1730, 50) # partenza
-        mv.motoriMovimento(-250,0,30)
-        mv.ciroscopio(45, 1) # guarda balena
-        mv.vaiDrittoPID(360, 50)
-        mv.motoriMovimento(70,0, 25) # scopa la balena
-        wait(0.5)
-        mv.motoriMovimento(600,0,-75) #torna indietro
-        mv.motoriMovimento(200,90,-50) #curva in retro
-        mv.motoriMovimento(1500,0,-100) #base 
-        wait(2.5)
-        mv.motoriMovimento(1100,0,-100) #polipo
-        mv.vaiDrittoPID(850,100)
-        return
-    if program == 8:
-        #2°  dalla 2 linea grande
-        schivabarca = avviaMotore(5, -50, "D", spike)
-        mv.vaiDrittoPID(1150,50,multithreading=schivabarca)
+        """ OTTO
+        multi = avviaMotore(5, -50, "D", spike)
+        mv.vaiDrittoPID(1150,50,multithreading=multi)
         mv.ciroscopio(60,-1)
         mv.vaiDrittoPID(1150,60)
         mv.muoviMotore(D,-50,30)
@@ -515,39 +412,8 @@ def race(program):
         mv.vaiDrittoPID(200,40)
         mv.ciroscopio(34,1)
         mv.motoriMovimento(-350,0,60)
-        mv.ciroscopio(110,1)
+        mv.ciroscopio(110,1)"""
+        #mv.motoriMovimento(-300,0,60)
         return
-    
-def main():
-    global programma_selezionato
-    spike.light_matrix.write(1)
-    spike.status_light.on(colors[0])
-    print("Waiting for start")
-    while True:
-        #selezione programma
-        if spike.right_button.is_pressed() and spike.left_button.is_pressed():
-            break
-        elif spike.right_button.is_pressed():
-            time.sleep(0.50)
-            programma_selezionato += 1
-            if programma_selezionato == 9:
-                print("programma a 9,reset")
-                programma_selezionato = 1
-            print("Missione selezionata:" + str(programma_selezionato))
-            spike.light_matrix.write(programma_selezionato)
-            spike.status_light.on(colors[programma_selezionato-1])
-        #esecuzione programma
-        elif spike.left_button.is_pressed():
-            time.sleep(0.50)
-            print("AVVIO il programma: " + str(programma_selezionato))
-            race(programma_selezionato)
-            programma_selezionato += 1
-            print("Concluso il programma: " + str(programma_selezionato))
-            if programma_selezionato == 9:
-                print("programma a 9,reset")
-                programma_selezionato = 1
-            spike.light_matrix.write(programma_selezionato)
-            spike.status_light.on(colors[programma_selezionato-1])
-main()
 
-sys.exit("Normalmente questo messaggio non verrà mai visto")
+main()
