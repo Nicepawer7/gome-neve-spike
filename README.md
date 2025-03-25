@@ -20,11 +20,11 @@
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
 - [ ] Capire dov'è il Massachussets
-- [ ] approfondire il simulatore dell' hardware Spike 
 
 ## Idee:
-- ~~Calibrare il pid con il metodo Zieger-Nichols~~ (scartato)
+- ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
+-  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
 - aggiungere gestione async del bottone
 - controllo anti-blocco vaidrittoPID()
 - multi file per migliore modularità
