@@ -19,10 +19,13 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
+- [ ] Correggere il PID e ricalibrarlo
+- [ ] Capire dov'è il Massachussets
 
 ## Idee:
-- ~~Calibrare il pid con il metodo Zieger-Nichols~~ (scartato)
+- ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
+-  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
 - aggiungere gestione async del bottone
 - controllo anti-blocco vaidrittoPID()
 - multi file per migliore modularità
@@ -36,3 +39,4 @@
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk
+- https://github.com/gpdaniels/spike-prime simulatore hardware spike e firmware
