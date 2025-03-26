@@ -14,6 +14,7 @@ colorSensor = ColorSensor('E')
 Kp = 0
 Ki = 0
 Kd = 0
+kTurn = 0.10
 programma_selezionato = 1
 stop = False
 run_multithreading = True
@@ -113,7 +114,6 @@ class Movimenti: #classe movimenti
             return
     
     def ciroscopio(self, angolo, verso):
-
         global gyroValue, stop
         if not stop:
             if verso not in [1, -1]:
@@ -123,9 +123,10 @@ class Movimenti: #classe movimenti
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_NE")
-                movement_motors.start_tank_at_power(30, -25)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    speed = decelerate(gyroValue,angolo)
+                    movement_motors.start_tank_at_power(speed,(speed- 10) * -1 )
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -133,7 +134,7 @@ class Movimenti: #classe movimenti
                 movement_motors.stop()
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
-                movement_motors.start_tank_at_power(-25, 30)
+                movement_motors.start_tank_at_power((speed-10) * -1, speed)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
@@ -151,9 +152,10 @@ class Movimenti: #classe movimenti
             resetGyroValue()
             target = (normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
+            speed = decelerate(gyroValue,angolo)
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_SE")
-                movement_motors.start_tank_at_power(25, -30)
+                movement_motors.start_tank_at_power(speed-10, speed * -1)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
@@ -163,7 +165,7 @@ class Movimenti: #classe movimenti
                 movement_motors.stop()
             elif verso == -1:
                 spike.light_matrix.show_image("ARROW_SW")
-                movement_motors.start_tank_at_power(-30, 25)
+                movement_motors.start_tank_at_power(speed * -1, speed - 10)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
@@ -288,7 +290,22 @@ class Movimenti: #classe movimenti
 
 
 
+def decelerate(degrees,setdegrees): 
+    # potrebbe essere un idea migliore la radice
+    turnSpeed = 70
+    missingTurn = setdegrees - degrees
+    if degrees >= setdegrees/3*2 and degrees <= setdegrees-5:
+        print (turnSpeed/map_range(missingTurn,0,setdegrees,0,turnSpeed))
+        return turnSpeed/map_range(missingTurn,0,setdegrees,turnSpeed,1) # rivedere qua, dovrebbe proporzionare i gradi mancanti da 1 a 70 per diminuire grdualmente il valore della velocità
+    elif degrees >= setdegrees - 5:
+        return 70
+    else:
+        return 20
 
+def accelerate():    
+def map_range(x,in_min,in_max,out_min,out_max):
+    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+    
 def resetGyroValue():
     global gyroValue, stop, spike
     if spike.left_button.is_pressed():
