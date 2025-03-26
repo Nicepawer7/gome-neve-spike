@@ -1,4 +1,4 @@
-# LEGO type:advanced slot:0
+# LEGO type:advanced slot:0 autostart
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
@@ -19,6 +19,7 @@ stop = False
 run_multithreading = True
 gyroValue = 0
 runSmall = True
+time.sleep(1)
 def skip():
     global stop
     global programma_selezionato
@@ -57,6 +58,8 @@ class Movimenti: #classe movimenti
             multithreading = avviaMotore(5, 100, 'C')'''
         global Kp, Ki, Kd
         global run_multithreading, runSmall, stop
+        tempo = 0
+        end = 0
         if not stop:
             print("Avvio vai dritto pid")
             if multithreading == None:
@@ -89,7 +92,7 @@ class Movimenti: #classe movimenti
                 calcoloPID(velocità)
                 errore = angolo - target
                 integrale += errore
-                derivata = errore - erroreVecchio
+                derivata = (errore - erroreVecchio)
 
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
                 correzione = max(-100, min(correzione, 100))
@@ -304,17 +307,17 @@ def calcoloPID(velocità):
         return
 
     if velocità >= 75:
-        Kp = 14
-        Ki = 0
-        Kd = 3
+        Kp = 10
+        Ki = 0.4
+        Kd = 0.12
     elif 40 <= velocità < 75:
-        Kp = 18.4
+        Kp = 0
         Ki = 0
-        Kd = 5
+        Kd = 0
     elif velocità < 40:
-        Kp = 28
-        Ki = 0.25
-        Kd = 1.5
+        Kp = 0
+        Ki = 0
+        Kd = 0
 
 def avviaMotore(gradi, velocità, porta, spike):
     global runSmall, run_multithreading, stop
@@ -385,9 +388,10 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
-        sys.exit("gay")
+        mv.vaiDrittoPID(3000,75)
+        sys.out()
+        """mv.vaiDrittoPID(1300, 65)
+        mv.motoriMovimento(1600,0,-90)"""
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
