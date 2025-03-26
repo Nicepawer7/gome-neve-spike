@@ -14,6 +14,7 @@ colorSensor = ColorSensor('E')
 Kp = 0
 Ki = 0
 Kd = 0
+kTurn = 0.10
 programma_selezionato = 1
 stop = False
 run_multithreading = True
@@ -110,7 +111,8 @@ class Movimenti: #classe movimenti
             return
     
     def ciroscopio(self, angolo, verso):
-
+        """ ho rimosso il controllo gyrovalue </> -1/+1 poichè con la funzione di decelerazione probabilmente si può ottenere un valore
+        sufficientemente preciso, probabilmente bisogna ricontrollare la proporzionalità della decelerazione"""
         global gyroValue, stop
         if not stop:
             if verso not in [1, -1]:
@@ -120,9 +122,10 @@ class Movimenti: #classe movimenti
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_NE")
-                movement_motors.start_tank_at_power(30, -25)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    speed = decelerate(gyroValue,angolo)
+                    movement_motors.start_tank_at_power(speed,(speed- 10) * -1 )
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -285,7 +288,16 @@ class Movimenti: #classe movimenti
 
 
 
+def decelerate(degrees,setdegrees): 
+    turnSpeed = 70
+    missingTurn = setdegrees - degrees
+    if missingTurn <= 5:
+        return 20
+    return turnSpeed/map_range(missingTurn,0,360,0,turnSpeed)
 
+def map_range(x,in_min,in_max,out_min,out_max):
+    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+    
 def resetGyroValue():
     global gyroValue, stop, spike
     if spike.left_button.is_pressed():
