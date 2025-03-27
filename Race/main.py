@@ -297,7 +297,7 @@ def decelerate(degrees,setdegrees):
     # potrebbe essere un idea migliore la radice
     turnSpeed = 100
     missingTurn = setdegrees - degrees
-    speed = ((missingturn - 1)**0.2) * -100
+    speed = (missingTurn - 1)**0.2
     print(speed)
     return speed
 
@@ -406,7 +406,6 @@ def race(program):
     print("Avvio missione " + str(program))
     if program == 1:
         mv.vaiDrittoPID(3000,75)
-        sys.exit()
         """mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)"""
         return
