@@ -1,5 +1,4 @@
 # LEGO type:advanced slot:0 autostart
-
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
@@ -15,12 +14,17 @@ colorSensor = ColorSensor('E')
 Kp = 0
 Ki = 0
 Kd = 0
+kTurn = 0.10
+programma_selezionato = 1
 stop = False
 run_multithreading = True
 gyroValue = 0
 runSmall = True
+time.sleep(1)
 def skip():
     global stop
+    global programma_selezionato
+    programma_selezionato -= 1
     stop = True
     spike.light_matrix.show_image("NO")
     time.sleep(0.30)
@@ -55,6 +59,8 @@ class Movimenti: #classe movimenti
             multithreading = avviaMotore(5, 100, 'C')'''
         global Kp, Ki, Kd
         global run_multithreading, runSmall, stop
+        tempo = 0
+        end = 0
         if not stop:
             print("Avvio vai dritto pid")
             if multithreading == None:
@@ -87,7 +93,7 @@ class Movimenti: #classe movimenti
                 calcoloPID(velocità)
                 errore = angolo - target
                 integrale += errore
-                derivata = errore - erroreVecchio
+                derivata = (errore - erroreVecchio)
 
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
                 correzione = max(-100, min(correzione, 100))
@@ -108,7 +114,7 @@ class Movimenti: #classe movimenti
             return
     
     def ciroscopio(self, angolo, verso):
-
+        print("Start ciroscopio")
         global gyroValue, stop
         if not stop:
             if verso not in [1, -1]:
@@ -118,9 +124,11 @@ class Movimenti: #classe movimenti
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_NE")
-                movement_motors.start_tank_at_power(30, -25)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    speed = decelerate(gyroValue,angolo)
+                    print(str(speed))
+                    movement_motors.start_tank_at_power(int(speed),int((speed- 5) * -1 ))
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -128,9 +136,10 @@ class Movimenti: #classe movimenti
                 movement_motors.stop()
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
-                movement_motors.start_tank_at_power(-25, 30)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    speed = decelerate(gyroValue,angolo)
+                    movement_motors.start_tank_at_power(int((speed-5)) * -1, int(speed))
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -146,9 +155,10 @@ class Movimenti: #classe movimenti
             resetGyroValue()
             target = (normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
+            speed = decelerate(gyroValue,angolo)
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_SE")
-                movement_motors.start_tank_at_power(25, -30)
+                movement_motors.start_tank_at_power(speed-10, speed * -1)
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
@@ -158,7 +168,7 @@ class Movimenti: #classe movimenti
                 movement_motors.stop()
             elif verso == -1:
                 spike.light_matrix.show_image("ARROW_SW")
-                movement_motors.start_tank_at_power(-30, 25)
+                movement_motors.start_tank_at_power(speed * -1, speed - 10)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if self.spike.left_button.is_pressed():
@@ -283,7 +293,23 @@ class Movimenti: #classe movimenti
 
 
 
+def decelerate(degrees,setdegrees): 
+    # potrebbe essere un idea migliore la radice
+    turnSpeed = 100
+    missingTurn = setdegrees - degrees
+    if degrees >= setdegrees/3*2 and degrees <= setdegrees:
+        print ("Decelerate " + str(turnSpeed/map_range(missingTurn,0,setdegrees,turnSpeed,1)))
+        return turnSpeed/map_range(missingTurn,0,setdegrees,turnSpeed,1) # rivedere qua, dovrebbe proporzionare i gradi mancanti da 1 a 70 per diminuire grdualmente il valore della velocità
+    elif int(degrees) >= setdegrees:
+        return 100
+    else:
+        return 30
 
+def accelerate():
+    pass    
+def map_range(x,in_min,in_max,out_min,out_max):
+    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+    
 def resetGyroValue():
     global gyroValue, stop, spike
     if spike.left_button.is_pressed():
@@ -302,17 +328,17 @@ def calcoloPID(velocità):
         return
 
     if velocità >= 75:
-        Kp = 14
-        Ki = 0
-        Kd = 3
+        Kp = 10
+        Ki = 0.4
+        Kd = 0.12
     elif 40 <= velocità < 75:
-        Kp = 18.4
+        Kp = 0
         Ki = 0
-        Kd = 5
+        Kd = 0
     elif velocità < 40:
-        Kp = 28
-        Ki = 0.25
-        Kd = 1.5
+        Kp = 0
+        Ki = 0
+        Kd = 0
 
 def avviaMotore(gradi, velocità, porta, spike):
     global runSmall, run_multithreading, stop
@@ -376,34 +402,7 @@ def wait(timer):
         time.sleep(timer)
     return
 mv = Movimenti(spike, 'A', 'B', movement_motors)
-#inizio -------------------------------------------------------------------------------------------------------------------------------------
-def main():
-        mv.vaiDrittoPID(269, 50)
-        mv.ciroscopio(88, 1)
-        mv.vaiDrittoPID(400, 50)
-        multithreading = avviaMotore(40 , 40 , "D",spike)
-        mv.vaiDrittoPID(900, 50, multithreading=multithreading)
-        mv.muoviMotore(D,65, -80)
-        mv.ciroscopio(45, -1)
-        wait(0.1)
-        mv.vaiDrittoPID(130 , 75)
-        mv.motoriMovimento(375,0,-50)
-        mv.ciroscopio(50,1)
-        mv.motoriMovimento(50,0,-50)
-        mv.muoviMotore(D,65, 60)
-        wait(0.5)
-        mv.vaiDrittoPID(700, 50)
-        mv.muoviMotore(C,90, -70)
-        mv.motoriMovimento(500,0,-15)
-        wait(0.2)
-        mv.muoviMotore(D,85, -80)
-        mv.motoriMovimento(300,0,-100)
-        mv.ciroscopio(40,-1)
-        #mv.vaiDrittoPID(600,70)
-        wait(0.5)
-        mv.vaiDrittoPID(800,100)
-        mv.ciroscopio(40,1)
-        mv.vaiDrittoPID(2000,100)
-        return
-
-main()
+stop = False
+#-----------------------------------------------------------------------------------------------------
+mv.ciroscopio(120,1)
+mv.ciroscopio(120,-1)
