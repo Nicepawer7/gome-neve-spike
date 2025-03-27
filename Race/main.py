@@ -1,7 +1,7 @@
-# LEGO type:advanced slot:0 autostart
-import sys, time, hub
-from spike import PrimeHub, Motor, MotorPair, ColorSensor
-from hub import battery
+# LEGO type:advanced slot:0
+import sys, time, hub # type: ignore
+from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
+from hub import battery # type: ignore
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
@@ -20,7 +20,6 @@ stop = False
 run_multithreading = True
 gyroValue = 0
 runSmall = True
-time.sleep(1)
 def skip():
     global stop
     global programma_selezionato
@@ -59,8 +58,6 @@ class Movimenti: #classe movimenti
             multithreading = avviaMotore(5, 100, 'C')'''
         global Kp, Ki, Kd
         global run_multithreading, runSmall, stop
-        tempo = 0
-        end = 0
         if not stop:
             print("Avvio vai dritto pid")
             if multithreading == None:
@@ -93,7 +90,7 @@ class Movimenti: #classe movimenti
                 calcoloPID(velocità)
                 errore = angolo - target
                 integrale += errore
-                derivata = (errore - erroreVecchio)
+                derivata = errore - erroreVecchio
 
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
                 correzione = max(-100, min(correzione, 100))
@@ -114,7 +111,6 @@ class Movimenti: #classe movimenti
             return
     
     def ciroscopio(self, angolo, verso):
-        print("Start ciroscopio")
         global gyroValue, stop
         if not stop:
             if verso not in [1, -1]:
@@ -127,8 +123,7 @@ class Movimenti: #classe movimenti
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
-                    print(str(speed))
-                    movement_motors.start_tank_at_power(int(speed),int((speed- 5) * -1 ))
+                    movement_motors.start_tank_at_power(speed,(speed- 10) * -1 )
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -136,10 +131,9 @@ class Movimenti: #classe movimenti
                 movement_motors.stop()
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
+                movement_motors.start_tank_at_power((speed-10) * -1, speed)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
-                    speed = decelerate(gyroValue,angolo)
-                    movement_motors.start_tank_at_power(int((speed-5)) * -1, int(speed))
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -297,7 +291,7 @@ def decelerate(degrees,setdegrees):
     # potrebbe essere un idea migliore la radice
     turnSpeed = 100
     missingTurn = setdegrees - degrees
-    speed = (missingTurn - 1)**0.2
+    speed = ((missingTurn - 1)**0.2) * -100
     print(speed)
     return speed
 
@@ -324,17 +318,17 @@ def calcoloPID(velocità):
         return
 
     if velocità >= 75:
-        Kp = 10
-        Ki = 0.4
-        Kd = 0.12
+        Kp = 14
+        Ki = 0
+        Kd = 3
     elif 40 <= velocità < 75:
-        Kp = 0
+        Kp = 18.4
         Ki = 0
-        Kd = 0
+        Kd = 5
     elif velocità < 40:
-        Kp = 0
-        Ki = 0
-        Kd = 0
+        Kp = 28
+        Ki = 0.25
+        Kd = 1.5
 
 def avviaMotore(gradi, velocità, porta, spike):
     global runSmall, run_multithreading, stop
@@ -405,9 +399,9 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(3000,75)
-        """mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)"""
+        mv.vaiDrittoPID(1300, 65)
+        mv.motoriMovimento(1600,0,-90)
+        sys.exit("gay")
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
