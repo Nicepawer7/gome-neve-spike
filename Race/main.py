@@ -289,17 +289,14 @@ class Movimenti: #classe movimenti
 
 def decelerate(degrees,setdegrees): 
     # potrebbe essere un idea migliore la radice
-    turnSpeed = 70
+    turnSpeed = 100
     missingTurn = setdegrees - degrees
-    if degrees >= setdegrees/3*2 and degrees <= setdegrees-5:
-        print (turnSpeed/map_range(missingTurn,0,setdegrees,0,turnSpeed))
-        return turnSpeed/map_range(missingTurn,0,setdegrees,turnSpeed,1) # rivedere qua, dovrebbe proporzionare i gradi mancanti da 1 a 70 per diminuire grdualmente il valore della velocità
-    elif degrees >= setdegrees - 5:
-        return 70
-    else:
-        return 20
+    speed = ((missingturn - 1)**0.2) * -100
+    print(speed)
+    return speed
 
-def accelerate():    
+def accelerate():  
+    pass  
 def map_range(x,in_min,in_max,out_min,out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
     
