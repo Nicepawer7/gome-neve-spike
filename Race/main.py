@@ -114,6 +114,7 @@ class Movimenti: #classe movimenti
             return
     
     def ciroscopio(self, angolo, verso):
+        print("Start ciroscopio")
         global gyroValue, stop
         if not stop:
             if verso not in [1, -1]:
@@ -126,7 +127,8 @@ class Movimenti: #classe movimenti
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
-                    movement_motors.start_tank_at_power(speed,(speed- 10) * -1 )
+                    print(str(speed))
+                    movement_motors.start_tank_at_power(int(speed),int((speed- 5) * -1 ))
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -134,9 +136,10 @@ class Movimenti: #classe movimenti
                 movement_motors.stop()
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
-                movement_motors.start_tank_at_power((speed-10) * -1, speed)
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    speed = decelerate(gyroValue,angolo)
+                    movement_motors.start_tank_at_power(int((speed-5)) * -1, int(speed))
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
@@ -302,7 +305,8 @@ def decelerate(degrees,setdegrees):
     else:
         return 20
 
-def accelerate():    
+def accelerate():
+    pass    
 def map_range(x,in_min,in_max,out_min,out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
     
@@ -406,7 +410,7 @@ def race(program):
     print("Avvio missione " + str(program))
     if program == 1:
         mv.vaiDrittoPID(3000,75)
-        sys.out()
+        sys.exit()
         """mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)"""
         return
