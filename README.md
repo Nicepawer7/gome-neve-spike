@@ -20,7 +20,8 @@
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
 - [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
-- [ ] Testare decelerazione Ciroscopio
+- [ ] Finire di implementare coseno Ciroscopio e testare
+- [ ] testare grafici nel main
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
