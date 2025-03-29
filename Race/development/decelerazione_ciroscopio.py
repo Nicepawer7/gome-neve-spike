@@ -2,17 +2,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import cos
 pi = 3.141
-setpoint = 180
+setdegrees = 180
+maxSpeed = 100
+degrees = 0
 gradiAttuale = []
-v = []
-i = 0
-while i <= setpoint:
-    v.append(cos(i*(pi/setpoint))*35+65)
-    gradiAttuale.append(i)
-    i += 1
+speed = []
+
+while degrees <= setdegrees:
+    vIncrease = (maxSpeed-30)/2
+    vMove = 30 + vIncrease # la posizione della funzione risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w + t
+    speed.append(cos(degrees*(pi/setdegrees))*vIncrease+vMove)
+    gradiAttuale.append(degrees)
+    degrees += 1
 
 fig, ax = plt.subplots()
-ax.plot(gradiAttuale,v)
+ax.axhline(y=30, color="black")
+ax.axhline(y=maxSpeed, color="black")
+ax.axvline(color="black")
+ax.axvline(x = setdegrees, color="black")
+ax.plot(gradiAttuale,speed)
 ax.set(xlabel='Gradi di rotazione', ylabel='Velocità',
        title='Funzione della velocità in relazione alla rotazione mancante')
 ax.grid()
