@@ -29,6 +29,7 @@
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
 -  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+-  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
 - controllo anti-blocco vaidrittoPID()
