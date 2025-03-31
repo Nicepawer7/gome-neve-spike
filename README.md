@@ -28,6 +28,7 @@
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
 -  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+-  Sistema di calcolo della posizione --> Kalman Filter
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
 - controllo anti-blocco vaidrittoPID()
