@@ -19,17 +19,14 @@ ax.plot([0,distanza],[100,100],color="black",linestyle="dashed")
 while i < kCurva:
     #velocità.append(radice(abs(((i-(distanza/kCurva/2))**2)/((distanza/kCurva/2)**2)-1)*(velocitàMax-30)**2)+30) 
     velocità.append(radice(((((i-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30)
-    print(radice(((((i-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30) #prima ellisse sezionata
     percorsa.append(i)
     i += 1
-
 while kCurva <= i <= distanza-kCurva:
-    percorsa.append(i)
     velocità.append(velocitàMax)
+    percorsa.append(i)
     i += 1
 while distanza-kCurva<= i <= distanza:
     velocità.append(radice(((((i-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30)
-    print(radice(((((i-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30)
     percorsa.append(i)
     i += 1
 

@@ -1,8 +1,9 @@
-# LEGO type:advanced slot:0
+# LEGO type:advanced slot:0 autostart
 import sys, time, hub # type: ignore
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
 from math import cos
+from math import sqrt as radice
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
@@ -301,16 +302,14 @@ def decelerate(degrees,setdegrees): # cambiare nome
     return speed
 
 def calcoloVelocità(percorsa,distanza):
-    from math import sqrt as radice
     velocitàMax = 100
-    distanza = 3000
     kCurva = distanza/4
     if percorsa < kCurva:
-        velocità = radice(((((i-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
+        velocità = radice(((((percorsa-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
     if kCurva <= percorsa <= distanza-kCurva:
         velocità = velocitàMax
     if distanza-kCurva<= percorsa <= distanza:
-        velocità = radice(((((i-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
+        velocità = radice(((((percorsa-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
     return velocità
         
 def resetGyroValue():
