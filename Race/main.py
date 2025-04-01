@@ -1,4 +1,4 @@
-# LEGO type:advanced slot:0
+# LEGO type:advanced slot:0 autostart
 import sys, time, hub # type: ignore
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
@@ -123,6 +123,8 @@ class Movimenti: #classe movimenti
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_NE")
+                if gyroValue < target - 1:
+                    print("Avviato ciclo") 
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
@@ -132,6 +134,8 @@ class Movimenti: #classe movimenti
                         return
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
+                if gyroValue > target - 1:
+                    print("Avviato cicclo") 
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
@@ -297,7 +301,7 @@ def decelerate(degrees,setdegrees):
     vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
     speed = cos(degrees*(pi/setdegrees))*vIncrease+vMove
     print("Velocità della ruota dominante: " + str(speed))
-    return speed
+    return int(speed)
 
 def accelerate():  
     pass  
@@ -403,9 +407,13 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
-        sys.exit("gay")
+        mv.ciroscopio(180,1)
+        mv.ciroscopio(90,-1)
+        mv.oipocsoric(181,1)
+        mv.oipocsoric(300,-1)
+
+        '''mv.vaiDrittoPID(1300, 65)
+        mv.motoriMovimento(1600,0,-90)'''
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -541,7 +549,8 @@ def main():
     spike.light_matrix.write(1)
     spike.status_light.on(colors[0])
     print("Waiting for start")
-    while True:
+    inCorsa = True
+    while inCorsa:
         #selezione programma
         if spike.right_button.is_pressed() and spike.left_button.is_pressed():
             break
