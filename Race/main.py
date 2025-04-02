@@ -1,5 +1,6 @@
 # LEGO type:advanced slot:0 autostart
-import sys, time, hub # type: ignore
+import sys, hub # type: ignore
+from time import sleep
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
 from math import cos
@@ -16,7 +17,6 @@ pi = 3.141
 Kp = 0
 Ki = 0
 Kd = 0
-kTurn = 0.10
 programma_selezionato = 1
 stop = False
 run_multithreading = True
@@ -29,7 +29,7 @@ def skip():
     stop = True
     spike.light_matrix.show_image("NO")
     movement_motors.stop()
-    time.sleep(0.30)
+    sleep(0.30)
 
 class bcolors:
         BATTERY = '\033[32m'
@@ -98,7 +98,6 @@ class Movimenti: #classe movimenti
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
                 correzione = max(-100, min(correzione, 100))
                 erroreVecchio = errore
-
                 self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)
                 if distanzaCompiuta == None:
                     distanzaCompiuta = 0.1
@@ -123,8 +122,6 @@ class Movimenti: #classe movimenti
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_NE")
-                if gyroValue < target - 1:
-                    print("Avviato ciclo") 
                 while gyroValue < target - 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
@@ -134,8 +131,6 @@ class Movimenti: #classe movimenti
                         return
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
-                if gyroValue > target - 1:
-                    print("Avviato cicclo") 
                 while gyroValue > target + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
@@ -397,7 +392,7 @@ def wait(timer):
         return
     if not stop:
         spike.light_matrix.show_image("TORTOISE")
-        time.sleep(timer)
+        sleep(timer)
     return
 
 
@@ -407,13 +402,10 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
+        mv.ciroscopio(300,1)
         mv.ciroscopio(180,1)
-        mv.ciroscopio(90,-1)
-        mv.oipocsoric(181,1)
-        mv.oipocsoric(300,-1)
-
-        '''mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)'''
+        """mv.vaiDrittoPID(1300, 65)
+        mv.motoriMovimento(1600,0,-90)"""
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -549,13 +541,12 @@ def main():
     spike.light_matrix.write(1)
     spike.status_light.on(colors[0])
     print("Waiting for start")
-    inCorsa = True
-    while inCorsa:
+    while True:
         #selezione programma
         if spike.right_button.is_pressed() and spike.left_button.is_pressed():
             break
         elif spike.right_button.is_pressed():
-            time.sleep(0.50)
+            sleep(0.50)
             programma_selezionato += 1
             if programma_selezionato == 9:
                 print("programma a 9,reset")
@@ -565,7 +556,7 @@ def main():
             spike.status_light.on(colors[programma_selezionato-1])
         #esecuzione programma
         elif spike.left_button.is_pressed():
-            time.sleep(0.50)
+            sleep(0.50)
             print("AVVIO il programma: " + str(programma_selezionato))
             race(programma_selezionato)
             programma_selezionato += 1
