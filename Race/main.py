@@ -1,15 +1,7 @@
-<<<<<<< HEAD
-# LEGO type:advanced slot:0
-import sys, time, hub # type: ignore
-from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
-from hub import battery # type: ignore
-from math import cos
-=======
 # LEGO type:advanced slot:2
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
->>>>>>> parent of fb81e8d (Dov'è il MAssachussets?)
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
