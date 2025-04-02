@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 # LEGO type:advanced slot:0
 import sys, time, hub # type: ignore
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
 from math import cos
+=======
+# LEGO type:advanced slot:2
+import sys, time, hub
+from spike import PrimeHub, Motor, MotorPair, ColorSensor
+from hub import battery
+>>>>>>> parent of fb81e8d (Dov'è il MAssachussets?)
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
@@ -405,7 +412,6 @@ def race(program):
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)
-        sys.exit("gay")
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -568,4 +574,4 @@ def main():
             spike.status_light.on(colors[programma_selezionato-1])
 main()
 
-sys.exit("Normalmente questo messaggio non verrà mai visto")
+print("Normalmente questo messaggio non verrà mai visto")
