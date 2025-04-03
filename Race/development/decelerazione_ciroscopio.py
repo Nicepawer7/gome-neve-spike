@@ -1,3 +1,5 @@
+# LEGO type:advanced slot:0 autostart
+
 import matplotlib.pyplot as plt
 import numpy as np
 from math import cos

@@ -131,7 +131,7 @@ class Movimenti: #classe movimenti
                         return
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
-                while gyroValue > target + 1:
+                while gyroValue > target:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
                     movement_motors.start_tank_at_power((speed-5) * -1, speed)
@@ -291,14 +291,19 @@ class Movimenti: #classe movimenti
 
 def decelerate(degrees,setdegrees): 
     # potrebbe essere un idea migliore la radice
+    global stop
     maxSpeed = 100
     vIncrease = (maxSpeed-30)/2
     vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
-    if degrees <= setdegrees-150:
-        speed = cos(degrees*(pi/(setdegrees-150)))*vIncrease+vMove
-    else:
-        speed = 30
-    print("Velocità della ruota dominante: " + str(speed))
+    if not stop:
+        if spike.left_button.is_pressed():
+            skip()
+            return
+        elif degrees <= setdegrees-setdegrees/4:
+            speed = cos(degrees*(pi/(setdegrees-(setdegrees/4))))*vIncrease+vMove
+        else:
+            speed = 30
+        print("Velocità della ruota dominante: " + str(speed))
     return int(speed)
 
 def accelerate():  
@@ -405,7 +410,9 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.ciroscopio(180,1)
+        mv.ciroscopio(90,1)
+        sleep(2)
+        mv.ciroscopio(90,-1)
         """mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)"""
         return

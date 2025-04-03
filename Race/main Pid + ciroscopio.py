@@ -413,7 +413,6 @@ def race(program):
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)
-        sys.exit("gay")
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
