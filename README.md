@@ -19,10 +19,11 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
+- [X] Finire e testare movement_logger
+- [ ] Sistemare la documentazione
 - [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
 - [ ] Finire Accelerazione-Decelerazione PID
-- [ ] Testare coseno Ciroscopio
-- [ ] Testare   main con grafici
+- [] Testare precisione coseno Ciroscopio (e eventualmente correggere)
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
