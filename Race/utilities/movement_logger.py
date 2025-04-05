@@ -56,11 +56,14 @@ def start(i):
 def manager():
     i = 0
     spike.light_matrix.show_image("ANGRY")
+    spike.status_light.on('red')
     while True:
         if spike.left_button.is_pressed():
             time.sleep(0.50)
+            spike.status_light.on('green')
             i = start(i)
             spike.light_matrix.show_image("ANGRY")
+            spike.status_light.on('red')
         if spike.right_button.is_pressed():
             time.sleep(0.50)
             i += 1
