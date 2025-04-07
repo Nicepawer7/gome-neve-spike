@@ -1,5 +1,6 @@
 # LEGO type:advanced slot:0 autostart
-import sys, hub # type: ignore
+from sys import exit
+import hub # type: ignore
 from time import sleep
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
@@ -32,9 +33,9 @@ def skip():
     sleep(0.30)
 
 class bcolors:
-        BATTERY = '\033[32m'
-        BATTERY_LOW = '\033[31m'
-        ENDC = '\033[0m'
+    BATTERY = '\033[32m'
+    BATTERY_LOW = '\033[31m'
+    ENDC = '\033[0m'
 
 if battery.voltage() < 8000:
     print(bcolors.BATTERY_LOW + "batteria scarica: " + str(battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ bcolors.ENDC)
@@ -118,21 +119,17 @@ class Movimenti: #classe movimenti
             if verso not in [1, -1]:
                 raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
             resetGyroValue()
-            target = angolo#(normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 print("Inizio curva avanti verso destra")
                 prec = -1 #valore iniziale per il controllo del valore precedente
                 spike.light_matrix.show_image("ARROW_NE")
-                while gyroValue <= target:
+                while gyroValue <= angolo:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if prec > gyroValue:
-                        print("Gyrovalue pre: " + str(gyroValue))
                         gyroValue = 360 + gyroValue
-                        print("Gyrovalue post: " + str(gyroValue))
                     else:
                         prec = gyroValue
-                    print("Gyrovalue: " + str(gyroValue))
                     speed = decelerate(gyroValue,angolo)
                     movement_motors.start_tank_at_power(speed,speed * -1 )
                     if self.spike.left_button.is_pressed():
@@ -142,16 +139,12 @@ class Movimenti: #classe movimenti
                 print("Inizio curva avanti verso sinistra")
                 spike.light_matrix.show_image("ARROW_NW")
                 prec = 1 #valore iniziale per il controllo del valore precedente
-                while abs(gyroValue) <= target:
-                    print(target)
+                while abs(gyroValue) <= angolo:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if prec < gyroValue:
-                        print("Gyrovalue pre: " + str(gyroValue))
                         gyroValue = 360 - gyroValue
-                        print("Gyrovalue post: " + str(gyroValue))
                     else:
                         prec = gyroValue
-                    print("Gyrovalue: " + str(gyroValue) + " Precedente: " + str(prec))
                     speed = decelerate(gyroValue,angolo)
                     movement_motors.start_tank_at_power(speed * -1, speed)
                     if self.spike.left_button.is_pressed():
@@ -168,13 +161,12 @@ class Movimenti: #classe movimenti
             if verso not in [1, -1]:
                 raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
             resetGyroValue()
-            target = angolo#(normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 print("Inizio curva indietro verso destra")
                 prec = -1
                 spike.light_matrix.show_image("ARROW_SE")
-                while gyroValue <= target:
+                while gyroValue <= angolo:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if prec > gyroValue:
                         gyroValue = 360 + gyroValue
@@ -190,7 +182,7 @@ class Movimenti: #classe movimenti
                 print("Inizio curva indietro verso sinistra")
                 spike.light_matrix.show_image("ARROW_SW")
                 prec = 1
-                while abs(gyroValue) <= target + 1:
+                while abs(gyroValue) <= angolo + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     if prec < gyroValue:
                         gyroValue = 360 - gyroValue
@@ -413,19 +405,6 @@ def ottieniDistanzaCompiuta(data):
 
     return distanzaCompiuta
 
-def normalize_angle(angle):
-    global stop, spike
-
-    if spike.left_button.is_pressed():
-        skip()
-        return
-
-    while angle > 180:
-        angle -= 360
-    while angle < -180:
-        angle += 360
-    return angle
-
 def wait(timer):
     if spike.left_button.is_pressed():
         print("Chiamo skip")
@@ -443,16 +422,8 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.ciroscopio(240,1)
-        mv.oipocsoric(104,-1)
-        mv.oipocsoric(300,1)
-        mv.ciroscopio(90,-1)
-        mv.oipocsoric(150,-1)
-        mv.oipocsoric(230,-1)
-        mv.ciroscopio(69,1)
-
-        """mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)"""
+        mv.vaiDrittoPID(1300, 65)
+        mv.motoriMovimento(1600,0,-90)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -615,4 +586,4 @@ def main():
             spike.status_light.on(colors[programma_selezionato-1])
 main()
 
-sys.exit("Normalmente questo messaggio non verrà mai visto")
+exit("Normalmente questo messaggio non verrà mai visto")

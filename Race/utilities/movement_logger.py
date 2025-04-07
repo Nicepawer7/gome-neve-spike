@@ -23,16 +23,29 @@ def move_log(): # aggiungere calcolo per indietro con bottone destro
     return
 
 def turn_log():
-    startGyro = spike.motion_sensor.get_yaw_angle()
-    while spike.left_button.is_pressed() == False: # attende di essere premuto e nel mentre conta i gradi di rotazione
+    spike.motion_sensor.reset_yaw_angle()
+    while True:
         gyro = spike.motion_sensor.get_yaw_angle()
-    ruotati = startGyro-gyro
-    """if ruotati > 0:
-        print("Girato di " + str(ruotati) + " gradi verso sinistra") # potrebbe essere necessario normalizzare i gradi in qualche modo
-    if ruotati < 0:
-        print("Girato di " + str(abs(ruotati)) + " gradi verso destra") # potrebbe essere necessario normalizzare i gradi in qualche modo
-    """
-    print("Start " + str(startGyro) + "Gyro " + str(gyro))
+        if gyro == 0:
+            pass
+        elif gyro > 0:
+            destra = True
+            break
+        elif gyro < 0:
+            destra = False
+            break
+    while not spike.left_button.is_pressed(): # attende di essere premuto e nel mentre conta i gradi di rotazione
+        gyro = spike.motion_sensor.get_yaw_angle()
+    if destra and gyro > 0:
+        print("Girato di " + str(gyro) + " verso destra")
+    elif destra and gyro < 0:
+        print("Girato di " + str(360+gyro) + " verso destra")
+    elif not destra and gyro < 0:
+        print("Girato di " + str(abs(gyro)) + " verso sinistra")
+    elif not destra and gyro > 0:
+        print("Girato di " + str(360 - gyro) + " verso sinistra")
+
+
 def left_log():
     lStart = C.get_degrees_counted() # gradi iniziali motore sinistro
     while spike.left_button.is_pressed() == False:
