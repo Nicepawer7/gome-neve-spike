@@ -125,7 +125,7 @@ class Movimenti: #classe movimenti
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
                 spike.light_matrix.show_image("ARROW_NE")
-                while gyroValue < target - 1:
+                while gyroValue <= target:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
                     movement_motors.start_tank_at_power(speed,(speed- 5) * -1 )
@@ -134,13 +134,16 @@ class Movimenti: #classe movimenti
                         return
             elif verso == -1:                
                 spike.light_matrix.show_image("ARROW_NW")
-                while gyroValue > target + 1:
+                while gyroValue > target:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
                     movement_motors.start_tank_at_power((speed-5) * -1, speed)
                     if self.spike.left_button.is_pressed():
                         skip()
                         return
+            movement_motors.stop() # !!!!
+            wait(0.2)
+            return
             movement_motors.stop() # !!!!
             wait(0.2)
             return
@@ -292,14 +295,22 @@ class Movimenti: #classe movimenti
 
 
 
-def decelerate(degrees,setdegrees): # cambiare nome
+def decelerate(degrees,setdegrees): 
     # potrebbe essere un idea migliore la radice
+    global stop
     maxSpeed = 100
     vIncrease = (maxSpeed-30)/2
     vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
-    speed = cos(degrees*(pi/setdegrees))*vIncrease+vMove
-    print("Velocità della ruota dominante: " + str(speed))
-    return speed
+    if not stop:
+        if spike.left_button.is_pressed():
+            skip()
+            return
+        elif degrees <= setdegrees-setdegrees/4:
+            speed = cos(degrees*(pi/(setdegrees-(setdegrees/4))))*vIncrease+vMove
+        else:
+            speed = 30
+        print("Velocità della ruota dominante: " + str(speed))
+    return int(speed)
 
 def calcoloVelocità(percorsa,distanza):
     velocitàMax = 100

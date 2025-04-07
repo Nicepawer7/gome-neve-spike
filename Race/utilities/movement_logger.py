@@ -27,11 +27,12 @@ def turn_log():
     while spike.left_button.is_pressed() == False: # attende di essere premuto e nel mentre conta i gradi di rotazione
         gyro = spike.motion_sensor.get_yaw_angle()
     ruotati = startGyro-gyro
-    if ruotati > 0:
+    """if ruotati > 0:
         print("Girato di " + str(ruotati) + " gradi verso sinistra") # potrebbe essere necessario normalizzare i gradi in qualche modo
     if ruotati < 0:
         print("Girato di " + str(abs(ruotati)) + " gradi verso destra") # potrebbe essere necessario normalizzare i gradi in qualche modo
-
+    """
+    print("Start " + str(startGyro) + "Gyro " + str(gyro))
 def left_log():
     lStart = C.get_degrees_counted() # gradi iniziali motore sinistro
     while spike.left_button.is_pressed() == False:

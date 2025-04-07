@@ -125,6 +125,7 @@ class Movimenti: #classe movimenti
                 while gyroValue <= target:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
                     speed = decelerate(gyroValue,angolo)
+                    print("Target " + str(target) + " Valore dela rotazione " + str(gyroValue))
                     movement_motors.start_tank_at_power(speed,(speed- 5) * -1 )
                     if self.spike.left_button.is_pressed():
                         skip()
@@ -410,9 +411,9 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.ciroscopio(90,1)
+        mv.ciroscopio(180,1)
         sleep(2)
-        mv.ciroscopio(90,-1)
+        mv.ciroscopio(180,-1)
         """mv.vaiDrittoPID(1300, 65)
         mv.motoriMovimento(1600,0,-90)"""
         return
