@@ -423,7 +423,7 @@ def race(program):
     print("Avvio missione " + str(program))
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
+        mv.ciroscopio(90,1)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -561,7 +561,7 @@ def main():
     print("Waiting for start")
     while True:
         #selezione programma
-        if spike.right_button.is_pressed() and spike.left_button.is_pressed():
+        if spike.right_button.was_pressed() and spike.left_button.was_pressed():
             break
         elif spike.right_button.is_pressed():
             sleep(0.50)
