@@ -27,6 +27,7 @@
 - [ ] rimuovere color sensor e metterlo in un altro file
 - [ ] Testare  coseno Ciroscopio (e eventualmente correggere)
 - [ ] Sistemare wiat con time.time()
+- [ ] Finite la gui
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
