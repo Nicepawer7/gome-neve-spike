@@ -25,8 +25,7 @@
 - [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
 - [ ] Finire Accelerazione-Decelerazione PID
 - [ ] rimuovere color sensor e metterlo in un altro file
-- [ ] Testare  coseno Ciroscopio (e eventualmente correggere)
-- [ ] Sistemare wiat con time.time()
+- [ ] Sistemare wait con time.time()
 - [ ] Finite la gui
 - [ ] Capire dov'è il Massachussets
 
