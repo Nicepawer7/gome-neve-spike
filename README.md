@@ -37,12 +37,9 @@
 -  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
-- aggiungere exit con bottone centrale
 - controllo anti-blocco vaidrittoPID()
 - strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
-- Migliorare l'efficacia e la precisione delle curve
-- Migliorare il PID per permettere al robot di andare più veloce
 - Finire la funzione del machine learning
 
 ## Note di sviluppo/ info-source:
