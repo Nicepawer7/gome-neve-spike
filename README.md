@@ -19,7 +19,8 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
-- [X] Finire e testare movement_logger
+- [X] Finire e testare movement_loggerù
+- [ ] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA
 - [ ] Se i test in laboratorio risultano positivi fare il merge con main
 - [ ] Sistemare la documentazione
 - [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)

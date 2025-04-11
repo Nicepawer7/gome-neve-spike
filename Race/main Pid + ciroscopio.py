@@ -91,6 +91,7 @@ class Movimenti: #classe movimenti
                 angolo = spike.motion_sensor.get_yaw_angle()
                 distanzaCompiuta = ottieniDistanzaCompiuta(self)
 
+                calcoloPID(velocità)
                 errore = angolo - target
                 integrale += errore
                 derivata = errore - erroreVecchio
@@ -99,7 +100,7 @@ class Movimenti: #classe movimenti
                 correzione = max(-100, min(correzione, 100))
                 erroreVecchio = errore
 
-                calcoloVelocità(int(distanzaCompiuta),distanza)
+                velocità = calcoloVelocità(int(distanzaCompiuta),distanza)
                 calcoloPID(velocità)
                 self.movement_motors.start_at_power(velocità, int(correzione) * -1)
                 if distanzaCompiuta == None:
@@ -312,16 +313,16 @@ def decelerate(degrees,setdegrees):
         print("Velocità della ruota dominante: " + str(speed))
     return int(speed)
 
-def calcoloVelocità(percorsa,distanza):
-    velocitàMax = 100
+def calcoloVelocità(percorsa,distanza,velocitàMax = 100):
     kCurva = distanza/4
+    print("Percorso: " + str(percorsa) + "Kcurva: " + str(kCurva))
     if percorsa < kCurva:
         velocità = radice(((((percorsa-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
     if kCurva <= percorsa <= distanza-kCurva:
         velocità = velocitàMax
     if distanza-kCurva<= percorsa <= distanza:
-        velocità = radice(((((percorsa-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
-    return velocità
+        velocità = radice(((((percorsa-distanza+kCurva)**2)/(kCurva*2)**2)-1)*(-(velocitàMax-30)**2))+30
+    return int(velocità)
         
 def resetGyroValue():
     global gyroValue, stop, spike
@@ -422,8 +423,7 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
+        mv.vaiDrittoPID(2000, 65)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra

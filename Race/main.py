@@ -5,6 +5,7 @@ from time import sleep
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
 from math import cos
+from math import sqrt as radice
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
@@ -54,7 +55,7 @@ class Movimenti: #classe movimenti
         self.motoreDestro = Motor(motoreDestro)
         self.movement_motors = movement_motors
 
-    def vaiDrittoPID(self, distanza, velocità, multithreading = None):
+    def vaiDrittoPID(self, distanza, multithreading = None):
         '''
         distanza:
         velocità:
@@ -91,7 +92,6 @@ class Movimenti: #classe movimenti
                 angolo = spike.motion_sensor.get_yaw_angle()
                 distanzaCompiuta = ottieniDistanzaCompiuta(self)
 
-                calcoloPID(velocità)
                 errore = angolo - target
                 integrale += errore
                 derivata = errore - erroreVecchio
@@ -99,6 +99,8 @@ class Movimenti: #classe movimenti
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
                 correzione = max(-100, min(correzione, 100))
                 erroreVecchio = errore
+                velocità = calcoloVelocità(int(distanzaCompiuta),distanza)
+                calcoloPID(velocità)
                 self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)
                 if distanzaCompiuta == None:
                     distanzaCompiuta = 0.1
@@ -336,6 +338,16 @@ def accelerate():
 """def map_range(x,in_min,in_max,out_min,out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min"""
     
+def calcoloVelocità(percorsa,distanza,velocitàMax = 70):
+    kCurva = distanza/4
+    print("Percorso: " + str(percorsa) + "Kcurva: " + str(kCurva))
+    if percorsa < kCurva:
+        velocità = radice(((((percorsa-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
+    if kCurva <= percorsa <= distanza-kCurva:
+        velocità = velocitàMax
+    if distanza-kCurva<= percorsa <= distanza:
+        velocità = radice(((((percorsa-distanza+kCurva)**2)/(kCurva*2)**2)-1)*(-(velocitàMax-30)**2))+30
+    return int(velocità)
 def resetGyroValue():
     global gyroValue, stop, spike
     if spike.left_button.is_pressed():
@@ -422,8 +434,8 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.ciroscopio(90,1)
+        mv.vaiDrittoPID(900)
+        mv.muoviMotore(C,200,50)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
