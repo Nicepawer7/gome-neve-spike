@@ -23,7 +23,7 @@
 - [ ] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA
 - [ ] Se i test in laboratorio risultano positivi fare il merge con main
 - [ ] Sistemare la documentazione
-- [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
+- [ ] Correggere il PID e ricalibrarlo
 - [ ] Finire Accelerazione-Decelerazione PID
 - [ ] rimuovere color sensor e metterlo in un altro file
 - [ ] Testare  coseno Ciroscopio (e eventualmente correggere)
@@ -34,6 +34,7 @@
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
 -  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+- ~~Pid con dt~~ (time non funziona con i decimi di secondo)
 -  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
