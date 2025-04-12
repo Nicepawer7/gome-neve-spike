@@ -19,32 +19,29 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
-- [X] Finire e testare movement_loggerù
-- [ ] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA
+- [X] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA + -Finire Accelerazione-Decelerazione PID
+- [X] rimuovere color sensor e metterlo in un altro file
+- [ ] Testare il PID e ricalibrato
 - [ ] Se i test in laboratorio risultano positivi fare il merge con main
 - [ ] Sistemare la documentazione
-- [ ] Correggere il PID e ricalibrarlo
-- [ ] Finire Accelerazione-Decelerazione PID
-- [ ] rimuovere color sensor e metterlo in un altro file
-- [ ] Testare  coseno Ciroscopio (e eventualmente correggere)
-- [ ] Sistemare wiat con time.time()
+
+- [ ] 
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
-- ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
-- ~~gestione bottone con threading~~ non supportato
--  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
-- ~~Pid con dt~~ (time non funziona con i decimi di secondo)
+- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
 -  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
 - aggiungere exit con bottone centrale
 - controllo anti-blocco vaidrittoPID()
-- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
-- Migliorare l'efficacia e la precisione delle curve
-- Migliorare il PID per permettere al robot di andare più veloce
 - Finire la funzione del machine learning
+- ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
+- ~~gestione bottone con threading~~ non supportato
+-  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+- ~~Pid con dt~~ (time non funziona con i decimi di secondo)
+- ~~Sistemare wait con time.time()~~ (-/)
 
 ## Note di sviluppo/ info-source:
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top

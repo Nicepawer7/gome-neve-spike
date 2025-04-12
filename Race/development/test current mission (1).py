@@ -368,7 +368,7 @@ def calcoloPID(velocità):
 
     if velocità == 100:
         print("velocità: "+ str(velocità))
-        Kp = 14
+        Kp = 14 #10/04
         Ki = 0.13
         Kd = 0.08
     elif 40 <= velocità < 75:

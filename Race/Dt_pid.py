@@ -5,7 +5,7 @@ from spike import PrimeHub, Motor, MotorPair
 from hub import battery
 
 spike = PrimeHub()
-movement_motors = MotorPair('A', 'B')
+movement_motors = MotorPair('B', 'A')
 motoreSinistro = Motor('A')
 motoreDestro = Motor('B')
 C = Motor('C')
@@ -20,20 +20,21 @@ velocità = 100
 spike.motion_sensor.reset_yaw_angle()
 angolo = 0
 target = 0
-class Movimenti:
+class PID:
     def __init__(self,Kp,Ki,Kd):
         self.integrale = 0
         self.previousError = 0
         self.kp = Kp
         self.ki = Ki
         self.kd = Kd
+        self.graph = []
         
     def calcoloPID(self,velocità):
 
         if velocità == 100:
             self.kp = 13
-            self.ki = 0.3
-            self.kd = 0
+            self.ki = 0.4
+            self.kd = 1
         elif 40 <= velocità < 75:
             self.kp = 18.4
             self.ki = 0
@@ -50,10 +51,10 @@ class Movimenti:
         derivata = (error - self.previousError) / dt
         correzione = (error * self.kp + self.integrale * self.ki + derivata * self.kd)
         self.previousError = error
-        print(error)
+        print(self.graph.append(error)) 
         return correzione
     
-mv = Movimenti(Kp,Ki,Kd)
+mv = PID(Kp,Ki,Kd)
 pressed = False
 while True:
     mv.calcoloPID(velocità) 
@@ -62,3 +63,4 @@ while True:
     steer = mv.pid(target, yaw)
     #print("Velocita: " + str(velocità) + "Steering: " + str(steer))
     movement_motors.start_at_power(int(velocità), int(steer))
+    

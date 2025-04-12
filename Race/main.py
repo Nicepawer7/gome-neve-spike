@@ -42,7 +42,7 @@ if battery.voltage() < 8000:
     print(bcolors.BATTERY_LOW + "batteria scarica: " + str(battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ bcolors.ENDC)
 else:
     print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)
-
+    
 class Movimenti: #classe movimenti
     def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
         """
@@ -364,19 +364,22 @@ def calcoloPID(velocità):
     if spike.left_button.is_pressed():
         skip()
         return
-
-    if velocità >= 75:
-        Kp = 14
-        Ki = 0
-        Kd = 3
+    if velocità == 100:
+        Kp = 13
+        Ki = 0.4
+        Kd = 1
+    elif 100 > velocità >= 75:
+        Kp = ""
+        Ki = ""
+        Kd = ""
     elif 40 <= velocità < 75:
-        Kp = 18.4
-        Ki = 0
-        Kd = 5
+        Kp = ""
+        Ki = ""
+        Kd = ""
     elif velocità < 40:
-        Kp = 28
-        Ki = 0.25
-        Kd = 1.5
+        Kp = ""
+        Ki = ""
+        Kd = ""
 
 def avviaMotore(gradi, velocità, porta, spike):
     global runSmall, run_multithreading, stop
