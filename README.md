@@ -8,9 +8,9 @@
 ## Missioni da Fare:
 
 ### Da Fare/concludere:
-
+    Aggiungere Pid al contrario
 ### Possibilmente da sistemare: 
-
+    Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
@@ -21,10 +21,11 @@
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
 - [X] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA + -Finire Accelerazione-Decelerazione PID
 - [X] rimuovere color sensor e metterlo in un altro file
-- [ ] Testare il PID e ricalibrato
+- [ ] Aggiungere pid al contrario
+- [ ] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
+- [ ] Testare il PID e ricalibrarlo
 - [ ] Se i test in laboratorio risultano positivi fare il merge con main
 - [ ] Sistemare la documentazione
-
 - [ ] 
 - [ ] Capire dov'è il Massachussets
 
