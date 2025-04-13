@@ -38,7 +38,7 @@
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
 - controllo anti-blocco vaidrittoPID()
-- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
+- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc) ---> https://forums.firstinspires.org/forum/general-discussions/first-programs/first-lego-league/the-challenge/programming-ab/95420-using-multiple-files-in-spike-prime-python
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Finire la funzione del machine learning
 
