@@ -2,7 +2,7 @@
 from sys import exit
 import hub # type: ignore
 from time import sleep
-from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
+from spike import PrimeHub, Motor, MotorPair # type: ignore
 from hub import battery # type: ignore
 from math import cos
 from math import sqrt as radice
@@ -10,7 +10,6 @@ from math import pi
 
 C = Motor('C')
 D = Motor('D')
-colorSensor = ColorSensor('E')#-------------------------------
 spike = PrimeHub()
 
 
@@ -22,13 +21,13 @@ class Manager:
         self.colors = ('green','red','blue','yellow','orange','pink','violet','azure')
         self.programma_selezionato = 1
         self.battery_manager()
-    def manager(self,race):
+    def manager(self,):
         self.spike.light_matrix.write(1)
         self.spike.status_light.on(self.colors[0])
         print("Waiting for start")
         while True:
             #selezione programma
-            if self.spike.right_button.was_pressed() and self.spike.left_button.was_pressed():
+            if self.spike.right_button.is_pressed() and self.spike.left_button.is_pressed():
                 break
             elif self.spike.right_button.is_pressed():
                 sleep(0.50)
@@ -43,7 +42,7 @@ class Manager:
             elif self.spike.left_button.is_pressed():
                 sleep(0.50)
                 print("AVVIO il programma: " + str(self.programma_selezionato))
-                race.race(self.programma_selezionato)
+                race(self.programma_selezionato)
                 self.programma_selezionato += 1
                 print("Concluso il programma: " + str(self.programma_selezionato))
                 if self.programma_selezionato == 9:
@@ -51,6 +50,7 @@ class Manager:
                     self.programma_selezionato = 1
                 self.spike.light_matrix.write(self.programma_selezionato)
                 self.spike.status_light.on(self.colors[self.programma_selezionato-1])
+    
     def skip(self):
         self.programma_selezionato -= 1
         Manager.stop = True
@@ -100,7 +100,6 @@ class Movimenti:
                 self.kp = 0
                 self.ki = 0
                 self.kd = 0
-                self.distanzaCompiuta = 0
 
             def vaiDrittoPID(self,distanza,velocitàMax = 100,multithreading = None):
                 '''
@@ -110,6 +109,7 @@ class Movimenti:
                     multithreading = avviaMotore(5, 100, 'C')'''
                 self.distanza = distanza
                 self.velocitàMax = velocitàMax
+                distanzaCompiuta = 0
                 if not Manager.stop:
                     print("Avvio vai dritto pid")
                     if multithreading == None:
@@ -129,7 +129,7 @@ class Movimenti:
                     self.right_Startvalue = self.movimenti.motoreDestro.get_degrees_counted()
                     self.spike.light_matrix.show_image("ARROW_N")
 
-                    while self.distanza >= self.distanzaCompiuta:
+                    while self.distanza >= distanzaCompiuta:
                         if self.spike.left_button.is_pressed():
                             self.manager.skip()
                             self.spike.movement_motors.stop()
@@ -137,19 +137,20 @@ class Movimenti:
                         if run_multithreading:
                             next(multithreading)
                         angolo = self.spike.motion_sensor.get_yaw_angle()
-                        self.distanzaCompiuta = self.ottieniDistanzaCompiuta()
+                        distanzaCompiuta = self.ottieniDistanzaCompiuta()
                         errore = angolo - target
                         integrale += errore
                         derivata = errore - erroreVecchio
 
-                        self.correzione = (errore * self.kp + integrale * self.ki + derivata * self.kd)
-                        self.correzione = max(-100, min(self.correzione, 100))
+                        correzione = (errore * self.kp + integrale * self.ki + derivata * self.kd)
+                        correzione = int(max(-100, min(correzione, 100)))
                         erroreVecchio = errore
-                        self.velocità = self.calcoloVelocità()
-                        self.calcoloPID(self.velocità)
-                        self.movimenti.movement_motors.start_at_power(int(self.velocità), int(self.correzione) * -1)
-                        if self.distanzaCompiuta == None:
-                            self.distanzaCompiuta = 0.1
+                        velocità = self.calcoloVelocità(distanzaCompiuta)
+                        self.calcoloPID(velocità)
+                        print(correzione)
+                        self.movimenti.movement_motors.start_at_power(velocità, correzione)
+                        if distanzaCompiuta == None:
+                            distanzaCompiuta = 0.1
 
 
                     self.movimenti.movement_motors.stop()
@@ -160,16 +161,15 @@ class Movimenti:
                     print("Finito pid")
                     return
             
-            def calcoloVelocità(self):
-                self.velocitàMax = 70
+            def calcoloVelocità(self,distanzaCompiuta):
                 kCurva = self.distanza/4
-                print("Percorso: " + str(self.distanzaCompiuta) + " Kcurva: " + str(kCurva))
-                if self.distanzaCompiuta < kCurva:
-                    velocità = radice(((((self.distanzaCompiuta-kCurva)**2)/kCurva**2)-1)*(-(self.velocitàMax-30)**2))+30
-                if kCurva <= self.distanzaCompiuta <= self.distanzaCompiuta-kCurva:
+                print("Percorso: " + str(distanzaCompiuta))
+                if distanzaCompiuta < kCurva:
+                    velocità = radice(((((distanzaCompiuta-kCurva)**2)/kCurva**2)-1)*(-(self.velocitàMax-30)**2))+30
+                if kCurva <= distanzaCompiuta <= distanzaCompiuta-kCurva:
                     velocità = self.velocitàMax
-                if self.distanzaCompiuta-kCurva<= self.distanzaCompiuta <= self.distanzaCompiuta:
-                    velocità = radice(((((self.distanzaCompiuta-self.distanzaCompiuta+kCurva)**2)/(kCurva*2)**2)-1)*(-(self.velocitàMax-30)**2))+30
+                if distanzaCompiuta-kCurva<= distanzaCompiuta <= distanzaCompiuta:
+                    velocità = radice(((((distanzaCompiuta-distanzaCompiuta+kCurva)**2)/(kCurva*2)**2)-1)*(-(self.velocitàMax-25)**2))+25
                 return int(velocità)
             
             def calcoloPID(self,velocità):
@@ -237,6 +237,7 @@ class Movimenti:
                     raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
                 self.spike.motion_sensor.reset_yaw_angle()
                 gyroValue = self.spike.motion_sensor.get_yaw_angle()
+                angolo -= 2
                 if verso == 1:
                     print("Inizio curva avanti verso destra")
                     prec = -1 #valore iniziale per il controllo del valore precedente
@@ -278,6 +279,7 @@ class Movimenti:
                     raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
                 self.spike.motion_sensor.reset_yaw_angle()
                 gyroValue = self.spike.motion_sensor.get_yaw_angle()
+                angolo -= 2
                 if verso == 1:
                     print("Inizio curva indietro verso destra")
                     prec = -1
@@ -343,7 +345,7 @@ class Movimenti:
         self.movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
         return
 
-    def muoviMotore(self,porta,gradi,velocità):
+    def muoviMotore(self,porta,gradi,velocità = 100):
         """
         porta = (C,D)
         gradi = distanza
@@ -361,142 +363,135 @@ class Movimenti:
             return
         porta.run_for_degrees(gradi,velocità)
 
-class Race:
-    def __init__(self,spike,manager,movimenti):
-        self.spike = spike
-        self.manager = manager
-        self.movimenti = movimenti
-    def race(self,program):
-        Manager.stop = False# !!!!
-        pid = self.movimenti.pid
-        cr = self.movimenti.ciroscopio
-        mm = self.movimenti
-        print("Avvio missione " + str(program))
-        if program == 1:
-            pid.vaiDrittoPID(900)
-            """
-            mv.muoviMotore(C,200,50)
-            return
-        if program == 2:
-            #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
-            multi = avviaMotore(80,20,"D",self.spike)
-            mv.vaiDrittoPID(1450,50,multi)
-            mv.ciroscopio(90,-1)
-            mv.vaiDrittoPID(120,30)
-            mv.muoviMotore(D,45,-20) 
-            mv.motoriMovimento(-300,0,50)
-            mv.oipocsoric(88,1)
-            multi = avviaMotore(45,20,"D",self.spike)
-            mv.vaiDrittoPID(100,50,multi)
-            mv.motoriMovimento(200,0,-50)
-            wait(0.1)
-            mv.muoviMotore(D,45,-20)
-            mv.ciroscopio(5,-1)
-            mv.vaiDrittoPID(150, 50)
-            mv.ciroscopio(5,1)
-            mv.muoviMotore(D,40,100) 
-            mv.motoriMovimento(2500,-10,-100)
-            return
-        if self.program == 3:
-            #alzare la vela della barca + squalo 4° fine da destra
-            multithreading = avviaMotore(120, -50, 'D', self.spike)
-            mv.vaiDrittoPID(1520, 50, multithreading=multithreading)
-            mv.ciroscopio(90, 1)
-            mv.vaiDrittoPID(615 , 50)
-            mv.motoriMovimento(200,0,-50)
-            mv.muoviMotore(motoreSinistro,630, 50)
-            mv.ciroscopio(12, -1)
-            mv.vaiDrittoPID(340, 50)
-            #da questo momento in poi la variabile stop non può mai diventare true perché sono tutte funzioni standard di spike, quindi è inutile fare il controllo
-            mv.muoviMotore(D,150, 80)
-            mv.motoriMovimento(300,-70,-50)
-            mv.muoviMotore(D,90, -100)
-            mv.motoriMovimento(1300,0,-100)
-            return
-        if self.program == 4:
-            #2° fine da 2° grande da sinistra?
-            mv.vaiDrittoPID(400, 50)
-            wait(0.2)
-            mv.motoriMovimento(450,0,-100)
-            return
-        if self.program == 5:
-            #5° da sinistra
-        #2° linea fine
-            mv.muoviMotore(D,40 , -80)
-            mv.vaiDrittoPID(320, 40)
-            mv.ciroscopio(90, 1)
-            mv.vaiDrittoPID(330, 50)
-            multithreading = avviaMotore(40 , 40 , "D",self.spike)
-            mv.vaiDrittoPID(1100, 50, multithreading=multithreading)
-            mv.muoviMotore(D,65, -80)
-            mv.ciroscopio(58, -1)
-            mv.motoriMovimento(170,0,-30)
-            mv.ciroscopio(51,1) #post squalo
-            mv.motoriMovimento(250,0,-60)
-            mv.muoviMotore(D,65, 60)
-            mv.vaiDrittoPID(600, 50)
-            mv.muoviMotore(C,90, -70)
-            mv.motoriMovimento(500,0,-15)
-            mv.muoviMotore(D,85, -80)
-            mv.motoriMovimento(200,0,-100)
-            mv.ciroscopio(20,-1)
-            mv.vaiDrittoPID(900,70)
-            mv.ciroscopio(35,1)
-            mv.vaiDrittoPID(1500,90)
-            return
-        if self.program == 6:
-            mv.vaiDrittoPID(150, 50)
-            mv.ciroscopio(51, -1)
-            mv.vaiDrittoPID(1400, 50) 
-            mv.ciroscopio(60,1)
-            mv.vaiDrittoPID(450,50)
-            mv.ciroscopio(72, 1)
-            mv.vaiDrittoPID(350, 50) 
-            mv.muoviMotore(C,-720,100)
-            mv.vaiDrittoPID(390,40)
-            mv.muoviMotore(C,160,-50)
-            mv.ciroscopio(12,1)
-            mv.vaiDrittoPID(230,50)
-            mv.motoriMovimento(-400,10,30)
-            mv.ciroscopio(80, 1) 
-            mv.motoriMovimento(1500,-11, 100)            
-            return
-        if self.program == 7:
-            #10° da destra
-            mv.vaiDrittoPID(1730, 50) # partenza
-            mv.motoriMovimento(-250,0,30)
-            mv.ciroscopio(45, 1) # guarda balena
-            mv.vaiDrittoPID(360, 50)
-            mv.motoriMovimento(70,0, 25) # scopa la balena
-            wait(0.5)
-            mv.motoriMovimento(600,0,-75) #torna indietro
-            mv.motoriMovimento(200,90,-50) #curva in retro
-            mv.motoriMovimento(1500,0,-100) #base 
-            wait(2.5)
-            mv.motoriMovimento(1100,0,-100) #polipo
-            mv.vaiDrittoPID(850,100)
-            return
-        if self.program == 8:
-            #2°  dalla 2 linea grande
-            schivabarca = avviaMotore(5, -50, "D", self.spike)
-            mv.vaiDrittoPID(1150,50,multithreading=schivabarca)
-            mv.ciroscopio(60,-1)
-            mv.vaiDrittoPID(1150,60)
-            mv.muoviMotore(D,-50,30)
-            wait(1)
-            mv.ciroscopio(61,-1)
-            mv.vaiDrittoPID(400,50)
-            mv.ciroscopio(32,1)
-            mv.vaiDrittoPID(200,40)
-            mv.ciroscopio(34,1)
-            mv.motoriMovimento(-350,0,60)
-            mv.ciroscopio(110,1)
-            return"""
+def race(program):
+    Manager.stop = False
+    print("Avvio missione " + str(program))
+    if program == 1:
+        pid.vaiDrittoPID(900)
+        cr.ciroscopio(90,1)
+        exit()
+    if program == 2:
+        #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
+        """multi = avviaMotore(80,20,"D",self.spike)
+        mv.vaiDrittoPID(1450,50,multi)
+        mv.ciroscopio(90,-1)
+        mv.vaiDrittoPID(120,30)
+        mv.muoviMotore(D,45,-20) 
+        mv.motoriMovimento(-300,0,50)
+        mv.oipocsoric(88,1)
+        multi = avviaMotore(45,20,"D",self.spike)
+        mv.vaiDrittoPID(100,50,multi)
+        mv.motoriMovimento(200,0,-50)
+        wait(0.1)
+        mv.muoviMotore(D,45,-20)
+        mv.ciroscopio(5,-1)
+        mv.vaiDrittoPID(150, 50)
+        mv.ciroscopio(5,1)
+        mv.muoviMotore(D,40,100) 
+        mv.motoriMovimento(2500,-10,-100)
+        return"""
+    if program == 3:
+        #alzare la vela della barca + squalo 4° fine da destra
+        """multithreading = avviaMotore(120, -50, 'D', self.spike)
+        mv.vaiDrittoPID(1520, 50, multithreading=multithreading)
+        mv.ciroscopio(90, 1)
+        mv.vaiDrittoPID(615 , 50)
+        mv.motoriMovimento(200,0,-50)
+        mv.muoviMotore(motoreSinistro,630, 50)
+        mv.ciroscopio(12, -1)
+        mv.vaiDrittoPID(340, 50)
+        #da questo momento in poi la variabile stop non può mai diventare true perché sono tutte funzioni standard di spike, quindi è inutile fare il controllo
+        mv.muoviMotore(D,150, 80)
+        mv.motoriMovimento(300,-70,-50)
+        mv.muoviMotore(D,90, -100)
+        mv.motoriMovimento(1300,0,-100)
+        return"""
+    if program == 4:
+        #2° fine da 2° grande da sinistra?
+        """mv.vaiDrittoPID(400, 50)
+        wait(0.2)
+        mv.motoriMovimento(450,0,-100)
+        return"""
+    if program == 5:
+        #5° da sinistra
+    #2° linea fine
+        """mv.muoviMotore(D,40 , -80)
+        mv.vaiDrittoPID(320, 40)
+        mv.ciroscopio(90, 1)
+        mv.vaiDrittoPID(330, 50)
+        multithreading = avviaMotore(40 , 40 , "D",self.spike)
+        mv.vaiDrittoPID(1100, 50, multithreading=multithreading)
+        mv.muoviMotore(D,65, -80)
+        mv.ciroscopio(58, -1)
+        mv.motoriMovimento(170,0,-30)
+        mv.ciroscopio(51,1) #post squalo
+        mv.motoriMovimento(250,0,-60)
+        mv.muoviMotore(D,65, 60)
+        mv.vaiDrittoPID(600, 50)
+        mv.muoviMotore(C,90, -70)
+        mv.motoriMovimento(500,0,-15)
+        mv.muoviMotore(D,85, -80)
+        mv.motoriMovimento(200,0,-100)
+        mv.ciroscopio(20,-1)
+        mv.vaiDrittoPID(900,70)
+        mv.ciroscopio(35,1)
+        mv.vaiDrittoPID(1500,90)
+        return"""
+    if program == 6:
+        """mv.vaiDrittoPID(150, 50)
+        mv.ciroscopio(51, -1)
+        mv.vaiDrittoPID(1400, 50) 
+        mv.ciroscopio(60,1)
+        mv.vaiDrittoPID(450,50)
+        mv.ciroscopio(72, 1)
+        mv.vaiDrittoPID(350, 50) 
+        mv.muoviMotore(C,-720,100)
+        mv.vaiDrittoPID(390,40)
+        mv.muoviMotore(C,160,-50)
+        mv.ciroscopio(12,1)
+        mv.vaiDrittoPID(230,50)
+        mv.motoriMovimento(-400,10,30)
+        mv.ciroscopio(80, 1) 
+        mv.motoriMovimento(1500,-11, 100)            
+        return"""
+    if program == 7:
+        """#10° da destra
+        mv.vaiDrittoPID(1730, 50) # partenza
+        mv.motoriMovimento(-250,0,30)
+        mv.ciroscopio(45, 1) # guarda balena
+        mv.vaiDrittoPID(360, 50)
+        mv.motoriMovimento(70,0, 25) # scopa la balena
+        wait(0.5)
+        mv.motoriMovimento(600,0,-75) #torna indietro
+        mv.motoriMovimento(200,90,-50) #curva in retro
+        mv.motoriMovimento(1500,0,-100) #base 
+        wait(2.5)
+        mv.motoriMovimento(1100,0,-100) #polipo
+        mv.vaiDrittoPID(850,100)
+        return"""
+    if program == 8:
+        """#2°  dalla 2 linea grande
+        schivabarca = avviaMotore(5, -50, "D", self.spike)
+        mv.vaiDrittoPID(1150,50,multithreading=schivabarca)
+        mv.ciroscopio(60,-1)
+        mv.vaiDrittoPID(1150,60)
+        mv.muoviMotore(D,-50,30)
+        wait(1)
+        mv.ciroscopio(61,-1)
+        mv.vaiDrittoPID(400,50)
+        mv.ciroscopio(32,1)
+        mv.vaiDrittoPID(200,40)
+        mv.ciroscopio(34,1)
+        mv.motoriMovimento(-350,0,60)
+        mv.ciroscopio(110,1)
+        return"""
+    return
         
 
 manager = Manager(spike)
-movimenti = Movimenti(spike,manager)
-race = Race(spike,manager,movimenti)
-manager.manager(race)
+mv = Movimenti(spike,manager)
+pid = mv.pid
+cr = mv.ciroscopio
+manager.manager()
 
 print("FINE")
