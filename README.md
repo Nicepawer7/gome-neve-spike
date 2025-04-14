@@ -8,9 +8,9 @@
 ## Missioni da Fare:
 
 ### Da Fare/concludere:
-
+    Aggiungere Pid al contrario
 ### Possibilmente da sistemare: 
-
+    Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
@@ -19,26 +19,30 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
-- [X] Finire e testare movement_logger
+- [X] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA + -Finire Accelerazione-Decelerazione PID
+- [X] rimuovere color sensor e metterlo in un altro file
+- [ ] Aggiungere pid al contrario
+- [ ] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
+- [ ] Testare il PID e ricalibrarlo
+- [ ] Se i test in laboratorio risultano positivi fare il merge con main
 - [ ] Sistemare la documentazione
-- [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
-- [ ] Finire Accelerazione-Decelerazione PID
-- [] Testare precisione coseno Ciroscopio (e eventualmente correggere)
+- [ ] 
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
-- ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
-- ~~gestione bottone con threading~~ non supportato
--  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
 -  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
+- aggiungere exit con bottone centrale
 - controllo anti-blocco vaidrittoPID()
-- multi file per migliore modularità
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
-- Migliorare l'efficacia e la precisione delle curve
-- Migliorare il PID per permettere al robot di andare più veloce
 - Finire la funzione del machine learning
+- ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
+- ~~gestione bottone con threading~~ non supportato
+-  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+- ~~Pid con dt~~ (time non funziona con i decimi di secondo)
+- ~~Sistemare wait con time.time()~~ (-/)
 
 ## Note di sviluppo/ info-source:
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top

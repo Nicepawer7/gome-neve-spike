@@ -1,0 +1,50 @@
+    def seguiLinea(self, distanza, velocità, lato, multithreading=None):
+        global Kp, Ki, Kd, run_multithreading, runSmall, colorSensor, stop
+
+        if multithreading == None:
+            run_multithreading = False
+
+        errore = 0
+        erroreVecchio = 0
+        integrale = 0
+        derivata = 0
+        loop = True
+
+        if distanza < 0:
+            distanza = abs(distanza)
+
+        invert = 1
+        if lato == 'sinistra':
+            invert = 1
+        elif lato == 'destra':
+            invert = -1
+
+        self.left_Startvalue = self.leftMotor.get_degrees_counted()
+        self.right_Startvalue = self.rightMotor.get_degrees_counted()
+        distanzaCompiuta = ottieniDistanzaCompiuta(self)
+
+        while loop:
+            if self.spike.left_button.is_pressed():
+                skip()
+                return
+
+            if run_multithreading:
+                next(multithreading)
+
+            distanzaCompiuta = ottieniDistanzaCompiuta(self)
+            calcoloPID(velocità)
+            erroreVecchio = errore
+            errore = colorSensor.get_reflected_light() - 50
+            integrale += errore
+            derivata = errore - erroreVecchio
+            correzione = (errore * Kp + integrale * Ki + derivata * Kd) * invert
+            correzione = max(-100, min(correzione, 100))
+            self.movement_motors.start_at_power(int(velocità), int(correzione))
+
+            if distanzaCompiuta >= distanza:
+                loop = False
+
+        self.movement_motors.stop()
+        run_multithreading = True
+        runSmall = True
+        multithreading = 0
