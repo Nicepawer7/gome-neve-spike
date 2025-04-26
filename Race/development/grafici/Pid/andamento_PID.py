@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from math import sqrt as radice
 velocitàMax = 100
 distanza = 3000
-kCurva = distanza/4
+kCurva = distanza/5
 percorsa = []
 velocità = []
 i = 0

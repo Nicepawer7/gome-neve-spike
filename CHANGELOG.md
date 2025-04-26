@@ -1,4 +1,12 @@
 # Changelog
+## Versione 0.9.2 17:41 Sabato 26/04/25
+* **MODIFICHE**
+    * Calibrato il pid a intervalli di velocità di 10
+    * Sistemato la funzione velocità
+    * Corretto file con classi ordinate,ufficialmente main.py
+    * Non ho potuto implementare in modo classico la derivata poichè spike 2 non permette le misure in millisecondi ma solo in secondi, sembra che spike 3 lo permetta ma dovrei testare,potrebbe essere utile viste le altre funzionalità disponibili e l'ide che sembra essere funzionante
+* **COSE DA FARE**
+    * Migliorare l'acccelerazione che sia più precisa
 ## Versione 0.9.1 22:13 Domenica 13/04/25
 * **MODIFICHE**
     * Testato le funzioni che sembrano funzionare al momento
