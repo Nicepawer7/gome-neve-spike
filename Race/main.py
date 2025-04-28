@@ -136,7 +136,7 @@ class Movimenti:
                     correzione = round(errore * self.pid.kp + integrale * self.pid.ki + derivata * self.pid.kd)
                     correzione = max(-100, min(correzione, 100))
                     print("Correzione: " + str(correzione) + " Proporzionale" + str(errore*self.pid.kp) + " Integrale: "+ str(integrale*self.pid.ki) + " Derivata " + str(derivata*self.pid.kd) + " Angolo: " + str(errore))
-                    self.movement_motors.start_at_power(velocità, correzione) #meno in base a gesù cristo
+                    self.movement_motors.start_at_power(velocità, correzione)
                     if distanzaCompiuta == None:
                         distanzaCompiuta = 0.1
 
@@ -162,9 +162,9 @@ class Movimenti:
                 print("Inizio curva avanti verso destra")
                 prec = -1 #valore iniziale per il controllo del valore precedente
                 self.spike.light_matrix.show_image("ARROW_NE")
-                while gyroValue <= angolo:
+                while gyroValue <= angolo: #finchè angolo attuale minore di obbiettivo
                     gyroValue = self.spike.motion_sensor.get_yaw_angle()
-                    if prec > gyroValue:
+                    if prec > gyroValue: #fondamnetalmente normalizzo l'angolo, se il valore precedente è più grande sono passato da 180 a -180
                         gyroValue = 360 + gyroValue
                     else:
                         prec = gyroValue
@@ -176,52 +176,9 @@ class Movimenti:
             elif verso == -1:
                 print("Inizio curva avanti verso sinistra")
                 self.spike.light_matrix.show_image("ARROW_NW")
-                prec = 1 #valore iniziale per il controllo del valore precedente
-                while abs(gyroValue) <= angolo:
-                    gyroValue = self.spike.motion_sensor.get_yaw_angle()
-                if prec < gyroValue:
-                    gyroValue = 360 - gyroValue
-                else:
-                    prec = gyroValue
-                speed = self.cr.decelerate(gyroValue,angolo)
-                self.movement_motors.start_tank_at_power(speed * -1, speed)
-                if self.spike.left_button.is_pressed():
-                    self.manager.skip()
-                    return
-        self.movement_motors.stop()
-        print("Fine curva avanti")
-        self.manager.wait(0.2)
-        return
-
-    def oipocsoric(self, angolo, verso=1):
-        if not Manager.stop:
-            if verso not in [1, -1]:
-                raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
-            self.spike.motion_sensor.reset_yaw_angle()
-            gyroValue = self.spike.motion_sensor.get_yaw_angle()
-            angolo -= 2
-            if verso == 1:
-                print("Inizio curva indietro verso destra")
-                prec = -1
-                self.spike.light_matrix.show_image("ARROW_SE")
-                while gyroValue <= angolo:
-                    gyroValue = self.spike.motion_sensor.get_yaw_angle()
-                    if prec > gyroValue:
-                        gyroValue = 360 + gyroValue
-                    else:
-                        prec = gyroValue
-                    speed = self.cr.decelerate(gyroValue,angolo)
-                    self.movement_motors.start_tank_at_power(speed, speed * -1)
-                    if self.spike.left_button.is_pressed():
-                        self.manager.skip()
-                        self.movement_motors.stop()
-                        return
-            elif verso == -1:
-                print("Inizio curva indietro verso sinistra")
-                self.spike.light_matrix.show_image("ARROW_SW")
-                prec = 1
-                while abs(gyroValue) <= angolo + 1:
-                    gyroValue = self.spike.motion_sensor.get_yaw_angle()
+                prec = 1 #valore iniziale per il controllo del valore giroscopio precedente
+                while abs(gyroValue) <= angolo: #finchè angolo attuale minore di obbiettivo
+                    gyroValue = self.spike.motion_sensor.get_yaw_angle()#fondamnetalmente normalizzo l'angolo, se il valore precedente è più piccolo sono passato da -180 a 180
                     if prec < gyroValue:
                         gyroValue = 360 - gyroValue
                     else:
@@ -230,12 +187,11 @@ class Movimenti:
                     self.movement_motors.start_tank_at_power(speed * -1, speed)
                     if self.spike.left_button.is_pressed():
                         self.manager.skip()
-                        self.movement_motors.stop()
                         return
-            self.movement_motors.stop()
-            print("Fine curva dietro")
-            self.manager.wait(0.2)
-            return
+        self.movement_motors.stop()
+        print("Fine curva avanti")
+        self.manager.wait(0.2)
+        return
 
     def motoriMovimento(self, distanza, sterzo = 0, velocità = 100):
         if self.spike.left_button.is_pressed():
@@ -384,14 +340,12 @@ def race(program):
     if program == 1:
         #multi = pid.avviaMotore(C,700) #dubito funzioni
         #mv.avanti(1000,multithreading=multi)
-        mv.avanti(6000,verso = 1,velocitàMax=100) #quelle con l'uguale hanno valore preimpostato che può essere cambiato così
-        """mv.avanti(1000,-1) #indietro con pid
+        """mv.avanti(1000,verso = 1,velocitàMax=100) #quelle con l'uguale hanno valore preimpostato che può essere cambiato così
+        mv.avanti(1000,-1) #indietro con pid
         mv.ciroscopio(90) #90 a destra (standard) avanti
         mv.ciroscopio(90,-1) # 90 a sinistra avanti
-        mv.oipocsoric(90) # 90 a destra (standard) indietro
-        mv.oipocsoric(90,-1) # 90 a sinistra indietro
         mv.muoviMotore(C,300,velocità=100) # muove un singolo motore C/D per tot gradi a tot velocità
-        mv.motoriMovimento(300,sterzo=0,velocità=100)""" # muove il robot senza pid, standard senza sterzo a velocità max
+        mv.motoriMovimento(300,sterzo=0,velocità=100) # muove il robot senza pid, standard senza sterzo a velocità max"""
         exit()
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra

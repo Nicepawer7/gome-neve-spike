@@ -11,6 +11,7 @@
     Aggiungere Pid al contrario
 ### Possibilmente da sistemare: 
     Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
+    aggiungere offset per le ruote giroscopio se proprio serve (possibilità di usare giroscopio vecchio)
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
@@ -23,7 +24,7 @@
 - [X] rimuovere color sensor e metterlo in un altro file
 - [X] Aggiungere pid al contrario
 - [X] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
-- [] Testare il PID e ricalibrarlo meglio di ora
+- [ ] Testare il PID e ricalibrarlo meglio di ora
 - [ ] Documentare la cosa del tempo in millisecondi
 - [ ] Sistemare la documentazione
 - [ ] Capire dov'è il Massachussets
