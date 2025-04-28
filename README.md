@@ -8,9 +8,8 @@
 ## Missioni da Fare:
 
 ### Da Fare/concludere:
-    Aggiungere Pid al contrario
+
 ### Possibilmente da sistemare: 
-    Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
     aggiungere offset per le ruote giroscopio se proprio serve (possibilità di usare giroscopio vecchio)
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
@@ -30,7 +29,7 @@
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
-- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
+- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc) --> se fattibile
 -  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
