@@ -103,7 +103,7 @@ class Movimenti:
                 self.ki = 0
                 self.kd = 0
 
-            def vaiDrittoPID(self,distanza,velocitàMax = 100,multithreading = None):
+            def vaiDrittoPID(self,distanza,velocitàMax = 80,multithreading = None):
                 '''
                 distanza:
                 velocità:
@@ -143,13 +143,13 @@ class Movimenti:
                         distanzaCompiuta = self.ottieniDistanzaCompiuta()
                         errore = angolo - target
                         integrale += errore * dt
-                        derivata = (errore - erroreVecchio) * dt
-                        correzione = (errore * self.kp + integrale * self.ki + derivata * self.kd)
-                        velocità = 90
-                        correzione = int(max(-100, min(correzione, 100)))
-                        #print("Correzione:" + str(correzione) + " kp: "+ str(self.kp) + " ki: " + str(self.ki) + " kd: " + str(self.kd))
+                        derivata = errore - erroreVecchio
+                        correzione = round(errore * self.kp + integrale * self.ki + derivata * self.kd)
+                        correzione = max(-100, min(correzione, 100))
                         erroreVecchio = errore
-                        #velocità = self.calcoloVelocità(distanzaCompiuta)
+                        #velocità = 50
+                        velocità = self.calcoloVelocità(distanzaCompiuta,distanza)
+                        #print("Correzione:" + str(correzione) + " Velocità: " + str(velocità))
                         self.calcoloPID(velocità)
                         self.movimenti.movement_motors.start_at_power(velocità, -correzione) # in base a gesù ci va un meno
                         if distanzaCompiuta == None:
@@ -164,15 +164,15 @@ class Movimenti:
                     print("Finito pid")
                     return
 
-            def calcoloVelocità(self,distanzaCompiuta):
-                kCurva = self.distanza/4
+            def calcoloVelocità(self,distanzaCompiuta,distanza):
+                kCurva = distanza/5
                 velocità = 0
                 if distanzaCompiuta < kCurva:
-                    velocità = radice(((((distanzaCompiuta-kCurva)**2)/kCurva**2)-1)*(-(self.velocitàMax-30)**2))+30
-                if kCurva <= distanzaCompiuta <= distanzaCompiuta-kCurva:
+                    velocità = radice(((((distanzaCompiuta-kCurva)**2)/kCurva**2)-1)*(-(self.velocitàMax-40)**2))+40
+                elif kCurva <= distanzaCompiuta <= distanza-kCurva:
                     velocità = self.velocitàMax
-                if distanzaCompiuta-kCurva<= distanzaCompiuta <= distanzaCompiuta:
-                    velocità = radice(((((distanzaCompiuta-distanzaCompiuta+kCurva)**2)/(kCurva*2)**2)-1)*(-(self.velocitàMax-25)**2))+25
+                elif distanza-kCurva<= distanzaCompiuta < distanza:
+                    velocità = (radice(((((distanzaCompiuta-distanza+kCurva)**2)/kCurva**2)-1)*(-(self.velocitàMax-30)**2))+30)
                 return int(velocità)
 
             def calcoloPID(self,velocità):
@@ -181,21 +181,37 @@ class Movimenti:
                     return
 
                 if velocità == 100:
-                    self.kp = 12
-                    self.ki = 0.3
-                    self.kd = 1
-                elif 100 > velocità >= 90:
-                    self.kp = 12
-                    self.ki = 0.3
-                    self.kd = 1
-                elif 40 <= velocità < 75:
-                    self.kp = 0
-                    self.ki = 0
+                    self.kp = 6
+                    self.ki = 0.25
                     self.kd = 0
-                elif velocità < 40:
-                    self.kp = 100
-                    self.ki = 100
-                    self.kd = 100
+                elif 100 > velocità >= 90:
+                    self.kp = 6
+                    self.ki = 0.3
+                    self.kd = 0
+                elif 90 > velocità >= 80:
+                    self.kp = 7
+                    self.ki = 0.30
+                    self.kd = 1
+                elif 80 > velocità >= 70:
+                    self.kp = 7
+                    self.ki = 0.35
+                    self.kd = 1
+                elif 70 > velocità >= 60:
+                    self.kp = 8
+                    self.ki = 0.30
+                    self.kd = 1
+                elif 60 > velocità >= 50:
+                    self.kp = 8
+                    self.ki = 0.3
+                    self.kd = 1
+                elif 50 > velocità >= 40:
+                    self.kp = 17
+                    self.ki = 0.4
+                    self.kd = 1
+                elif 40 > velocità :
+                    self.kp = 25
+                    self.ki = 0.5
+                    self.kd = 1
 
             def ottieniDistanzaCompiuta(self):
                 if self.spike.left_button.is_pressed():
@@ -369,8 +385,7 @@ def race(program):
     Manager.stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-
-        pid.vaiDrittoPID(6450)
+        pid.vaiDrittoPID(3450)
         exit()
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra

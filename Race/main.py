@@ -2,6 +2,7 @@
 from sys import exit
 import hub # type: ignore
 from time import sleep
+from time import ticks_us
 from spike import PrimeHub, Motor, MotorPair # type: ignore
 from hub import battery # type: ignore
 from math import cos
@@ -94,7 +95,8 @@ class Movimenti:
             multithreading:
                 multithreading = avviaMotore(5, 100, 'C')'''
             distanzaCompiuta = 0
-            dt = 0.001
+            dt_start = 0
+            self.spike.motion_sensor.reset_yaw_angle()
             if not Manager.stop:
                 print("Avvio vai dritto pid")
                 if multithreading == None:
@@ -102,7 +104,6 @@ class Movimenti:
                 if verso == -1:
                     self.movement_motors = MotorPair('B','A')
 
-                target = self.spike.motion_sensor.get_yaw_angle()
                 errore = 0
                 erroreVecchio = 0
                 integrale = 0
@@ -119,22 +120,23 @@ class Movimenti:
                 while distanza >= distanzaCompiuta:
                     if self.spike.left_button.is_pressed():
                         self.manager.skip()
-                        self.spike.movement_motors.stop()
+                        self.movement_motors.stop()
                         return
                     if self.run_multithreading:
                         next(multithreading)
-                    angolo = self.spike.motion_sensor.get_yaw_angle()
+                    errore = -self.spike.motion_sensor.get_yaw_angle()
                     distanzaCompiuta = self.pid.ottieniDistanzaCompiuta()
-                    errore = angolo - target
+                    dt = (ticks_us() - dt_start)/1000000
+                    dt_start = ticks_us()
                     integrale += errore * dt
-                    derivata = errore - erroreVecchio
+                    derivata = (errore - erroreVecchio)/dt
                     erroreVecchio = errore
                     velocità = self.pid.calcoloVelocità(distanzaCompiuta,distanza,velocitàMax)
                     self.pid.calcoloPID(velocità)
                     correzione = round(errore * self.pid.kp + integrale * self.pid.ki + derivata * self.pid.kd)
                     correzione = max(-100, min(correzione, 100))
-                    print(correzione)
-                    self.movement_motors.start_at_power(velocità, -correzione) #meno in base a gesù cristo
+                    print("Correzione: " + str(correzione) + " Proporzionale" + str(errore*self.pid.kp) + " Integrale: "+ str(integrale*self.pid.ki) + " Derivata " + str(derivata*self.pid.kd) + " Angolo: " + str(errore))
+                    self.movement_motors.start_at_power(velocità, correzione) #meno in base a gesù cristo
                     if distanzaCompiuta == None:
                         distanzaCompiuta = 0.1
 
@@ -293,37 +295,37 @@ class Movimenti:
                     self.manager.skip()
                     return
                 if velocità == 100:
-                    self.kp = 6
-                    self.ki = 0.25
-                    self.kd = 0
+                    self.kp = 2.3
+                    self.ki = 4
+                    self.kd = 0.42
                 elif 100 > velocità >= 90:
-                    self.kp = 6
-                    self.ki = 0.3
-                    self.kd = 0
+                    self.kp = 2.7
+                    self.ki = 4
+                    self.kd = 0.4
                 elif 90 > velocità >= 80:
-                    self.kp = 7
-                    self.ki = 0.30
-                    self.kd = 1
+                    self.kp = 2.8
+                    self.ki = 3.8
+                    self.kd = 0.4
                 elif 80 > velocità >= 70:
-                    self.kp = 7
-                    self.ki = 0.35
-                    self.kd = 1
+                    self.kp = 2.5
+                    self.ki = 3.6
+                    self.kd = 0.42
                 elif 70 > velocità >= 60:
-                    self.kp = 8
-                    self.ki = 0.30
-                    self.kd = 1
+                    self.kp = 2.5
+                    self.ki = 3.6
+                    self.kd = 0.42
                 elif 60 > velocità >= 50:
-                    self.kp = 8
-                    self.ki = 0.3
-                    self.kd = 1
+                    self.kp = 2.7
+                    self.ki = 3.4
+                    self.kd = 0.44
                 elif 50 > velocità >= 40:
-                    self.kp = 17
-                    self.ki = 0.4
-                    self.kd = 1
+                    self.kp = 2.8
+                    self.ki = 3.3
+                    self.kd = 0.48
                 elif 40 > velocità :
-                    self.kp = 25
-                    self.ki = 0.5
-                    self.kd = 1
+                    self.kp = 2.9
+                    self.ki = 3.3
+                    self.kd = 0.48
 
             def ottieniDistanzaCompiuta(self):
                 if self.spike.left_button.is_pressed():
@@ -382,14 +384,14 @@ def race(program):
     if program == 1:
         #multi = pid.avviaMotore(C,700) #dubito funzioni
         #mv.avanti(1000,multithreading=multi)
-        mv.avanti(1000,verso = 1,velocitàMax=70) #quelle con l'uguale hanno valore preimpostato che può essere cambiato così
-        mv.avanti(1000,-1) #indietro con pid
+        mv.avanti(6000,verso = 1,velocitàMax=100) #quelle con l'uguale hanno valore preimpostato che può essere cambiato così
+        """mv.avanti(1000,-1) #indietro con pid
         mv.ciroscopio(90) #90 a destra (standard) avanti
         mv.ciroscopio(90,-1) # 90 a sinistra avanti
         mv.oipocsoric(90) # 90 a destra (standard) indietro
         mv.oipocsoric(90,-1) # 90 a sinistra indietro
         mv.muoviMotore(C,300,velocità=100) # muove un singolo motore C/D per tot gradi a tot velocità
-        mv.motoriMovimento(300,sterzo=0,velocità=100) # muove il robot senza pid, standard senza sterzo a velocità max
+        mv.motoriMovimento(300,sterzo=0,velocità=100)""" # muove il robot senza pid, standard senza sterzo a velocità max
         exit()
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra

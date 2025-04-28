@@ -21,12 +21,11 @@
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
 - [X] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA + -Finire Accelerazione-Decelerazione PID
 - [X] rimuovere color sensor e metterlo in un altro file
-- [ ] Aggiungere pid al contrario
-- [ ] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
-- [ ] Testare il PID e ricalibrarlo
-- [ ] Se i test in laboratorio risultano positivi fare il merge con main
+- [X] Aggiungere pid al contrario
+- [X] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
+- [] Testare il PID e ricalibrarlo meglio di ora
+- [ ] Documentare la cosa del tempo in millisecondi
 - [ ] Sistemare la documentazione
-- [ ] 
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:

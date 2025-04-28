@@ -1,4 +1,11 @@
 # Changelog
+## Versione 0.9.2.69 17:41 Sabato 26/04/25
+* **MODIFICHE**
+    * a quanto pare dopo aver scavato un po' nello spike si può misurare il tempo in millisecondi e anche in nanosecondi con il comando time.ticks_ms() e time.ticks_us()
+    * Ho implementato la misura del periodo dt per derivata e integrale e sembra funzionare molto bene, le costanti sono calibrate e l'accelerazione non sputtana troppo.
+* **COSE DA FARE**
+    * Rendere più preciso il pid e iniziare a programmare tutte le missioni
+    * piangere
 ## Versione 0.9.2 17:41 Sabato 26/04/25
 * **MODIFICHE**
     * Calibrato il pid a intervalli di velocità di 10
