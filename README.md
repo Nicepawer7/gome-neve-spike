@@ -8,9 +8,9 @@
 ## Missioni da Fare:
 
 ### Da Fare/concludere:
-    Aggiungere Pid al contrario
+
 ### Possibilmente da sistemare: 
-    Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
+
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
@@ -23,13 +23,13 @@
 - [X] rimuovere color sensor e metterlo in un altro file
 - [X] Aggiungere pid al contrario
 - [X] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
-- [] Testare il PID e ricalibrarlo meglio di ora
+- [ ] Testare il PID e ricalibrarlo meglio di ora
 - [ ] Documentare la cosa del tempo in millisecondi
 - [ ] Sistemare la documentazione
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
-- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc)
+- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc) --> se fattibile
 -  Alleggerire i moduli importati (es: from hub import motion_sensor)
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
