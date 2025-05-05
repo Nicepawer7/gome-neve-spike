@@ -20,6 +20,7 @@
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
 - [X] Finire e testare movement_logger
+- [ ] Aggiungere sblocco motore (quello con i magneti che non gira più)
 - [ ] Se i test in laboratorio risultano positivi fare il merge con main
 - [ ] Sistemare la documentazione
 - [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
