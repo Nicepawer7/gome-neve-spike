@@ -44,6 +44,9 @@
 - ~~Sistemare wait con time.time()~~ (-/)
 
 ## Note di sviluppo/ info-source:
+- [grafico di andamento sinusoidale del pid](https://www.desmos.com/calculator/o4iccwh5g7)
+- [graifico di andamenti su base ellissi del pid (scartato](https://www.desmos.com/calculator/ywmxc36tne)
+- [grafico di andamento del giroscopio](https://www.desmos.com/calculator/yfotatko4e)
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk
