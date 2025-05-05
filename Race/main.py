@@ -118,6 +118,7 @@ class Movimenti:
                 self.spike.light_matrix.show_image("ARROW_N")
 
                 while distanza >= distanzaCompiuta:
+                    print(distanzaCompiuta)
                     if self.spike.left_button.is_pressed():
                         self.manager.skip()
                         self.movement_motors.stop()
@@ -132,10 +133,11 @@ class Movimenti:
                     derivata = (errore - erroreVecchio)/dt
                     erroreVecchio = errore
                     velocità = self.pid.calcoloVelocità(distanzaCompiuta,distanza,velocitàMax)
+                    print(velocità)
                     self.pid.calcoloPID(velocità)
                     correzione = round(errore * self.pid.kp + integrale * self.pid.ki + derivata * self.pid.kd)
                     correzione = max(-100, min(correzione, 100))
-                    print("Correzione: " + str(correzione) + " Proporzionale" + str(errore*self.pid.kp) + " Integrale: "+ str(integrale*self.pid.ki) + " Derivata " + str(derivata*self.pid.kd) + " Angolo: " + str(errore))
+                    #print("Correzione: " + str(correzione) + " Proporzionale" + str(errore*self.pid.kp) + " Integrale: "+ str(integrale*self.pid.ki) + " Derivata " + str(derivata*self.pid.kd) + " Angolo: " + str(errore))
                     self.movement_motors.start_at_power(velocità, correzione)
                     if distanzaCompiuta == None:
                         distanzaCompiuta = 0.1
@@ -206,7 +208,7 @@ class Movimenti:
         self.movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
         return
 
-    def muoviMotore(self,porta,gradi,velocità = 100):
+    def muoviMotore(self,porta,gradi,velocità = 100,direzione = 1):
         """
         porta = (C,D)
         gradi = distanza
@@ -222,6 +224,9 @@ class Movimenti:
             self.spike.light_matrix.show_image("PACMAN")
         else:
             return
+        print(gradi)
+        gradi *= direzione
+        print(gradi)
         porta.run_for_degrees(gradi,velocità)
 
     class PID:
@@ -236,14 +241,29 @@ class Movimenti:
                 self.kd = 0
 
             def calcoloVelocità(self,distanzaCompiuta,distanza,velocitàMax):
-                kCurva = distanza/5
+                #kCurva = distanza/5
+                velocitàMin = 20 # minimo di 5-8 con fattore di sicurezza 150%
                 velocità = 0
-                if distanzaCompiuta < kCurva:
+                """if distanzaCompiuta < kCurva:
                     velocità = radice(((((distanzaCompiuta-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-40)**2))+40
                 elif kCurva <= distanzaCompiuta <= distanza-kCurva:
                     velocità = velocitàMax
                 elif distanza-kCurva<= distanzaCompiuta < distanza:
-                    velocità = (radice(((((distanzaCompiuta-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30)
+                    velocità = (radice(((((distanzaCompiuta-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30)"""
+                d = distanza
+                """d = distanza - (distanza/((distanza*8)/3004))
+                if distanzaCompiuta < d:
+                    velocità = cos((distanzaCompiuta+d/2)*(2*pi)/d)*((velocitàMax-velocitàMin)/2)+((velocitàMax+velocitàMin)/2)
+                elif d < distanzaCompiuta < distanza:
+                    velocità = velocitàMin"""
+                if distanzaCompiuta < distanza/2:
+                    velocitàMin = 40
+                if distanza > 1500:
+                    velocitàMax = 200
+                velocità = cos((distanzaCompiuta+d/2)*(2*pi)/d)*((velocitàMax-velocitàMin)/2)+((velocitàMax+velocitàMin)/2)
+                if velocità > 100:
+                    velocità = 100 
+                #potrei frenare con velocità più bassa di quella necessaria a muoversi
                 return int(velocità)
 
             def calcoloPID(self,velocità):
@@ -338,130 +358,23 @@ def race(program):
     Manager.stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        #multi = pid.avviaMotore(C,700) #dubito funzioni
-        #mv.avanti(1000,multithreading=multi)
-        """mv.avanti(1000,verso = 1,velocitàMax=100) #quelle con l'uguale hanno valore preimpostato che può essere cambiato così
-        mv.avanti(1000,-1) #indietro con pid
-        mv.ciroscopio(90) #90 a destra (standard) avanti
-        mv.ciroscopio(90,-1) # 90 a sinistra avanti
-        mv.muoviMotore(C,300,velocità=100) # muove un singolo motore C/D per tot gradi a tot velocità
-        mv.motoriMovimento(300,sterzo=0,velocità=100) # muove il robot senza pid, standard senza sterzo a velocità max"""
-        exit()
+        # primo quadrato piccolo rosso da sinistra
+        mv.avanti(500)
+        #mv.muoviMotore(D,300,85,direzione=1)
     if program == 2:
-        #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
-        """multi = avviaMotore(80,20,"D",self.spike)
-        mv.vaiDrittoPID(1450,50,multi)
-        mv.ciroscopio(90,-1)
-        mv.vaiDrittoPID(120,30)
-        mv.muoviMotore(D,45,-20)
-        mv.motoriMovimento(-300,0,50)
-        mv.oipocsoric(88,1)
-        multi = avviaMotore(45,20,"D",self.spike)
-        mv.vaiDrittoPID(100,50,multi)
-        mv.motoriMovimento(200,0,-50)
-        wait(0.1)
-        mv.muoviMotore(D,45,-20)
-        mv.ciroscopio(5,-1)
-        mv.vaiDrittoPID(150, 50)
-        mv.ciroscopio(5,1)
-        mv.muoviMotore(D,40,100)
-        mv.motoriMovimento(2500,-10,-100)
-        return"""
+        mv.avanti(1000)
     if program == 3:
-        #alzare la vela della barca + squalo 4° fine da destra
-        """multithreading = avviaMotore(120, -50, 'D', self.spike)
-        mv.vaiDrittoPID(1520, 50, multithreading=multithreading)
-        mv.ciroscopio(90, 1)
-        mv.vaiDrittoPID(615 , 50)
-        mv.motoriMovimento(200,0,-50)
-        mv.muoviMotore(motoreSinistro,630, 50)
-        mv.ciroscopio(12, -1)
-        mv.vaiDrittoPID(340, 50)
-        #da questo momento in poi la variabile stop non può mai diventare true perché sono tutte funzioni standard di spike, quindi è inutile fare il controllo
-        mv.muoviMotore(D,150, 80)
-        mv.motoriMovimento(300,-70,-50)
-        mv.muoviMotore(D,90, -100)
-        mv.motoriMovimento(1300,0,-100)
-        return"""
+        mv.avanti(1500)
     if program == 4:
-        #2° fine da 2° grande da sinistra?
-        """mv.vaiDrittoPID(400, 50)
-        wait(0.2)
-        mv.motoriMovimento(450,0,-100)
-        return"""
+        mv.avanti(2000)
     if program == 5:
-        #5° da sinistra
-    #2° linea fine
-        """mv.muoviMotore(D,40 , -80)
-        mv.vaiDrittoPID(320, 40)
-        mv.ciroscopio(90, 1)
-        mv.vaiDrittoPID(330, 50)
-        multithreading = avviaMotore(40 , 40 , "D",self.spike)
-        mv.vaiDrittoPID(1100, 50, multithreading=multithreading)
-        mv.muoviMotore(D,65, -80)
-        mv.ciroscopio(58, -1)
-        mv.motoriMovimento(170,0,-30)
-        mv.ciroscopio(51,1) #post squalo
-        mv.motoriMovimento(250,0,-60)
-        mv.muoviMotore(D,65, 60)
-        mv.vaiDrittoPID(600, 50)
-        mv.muoviMotore(C,90, -70)
-        mv.motoriMovimento(500,0,-15)
-        mv.muoviMotore(D,85, -80)
-        mv.motoriMovimento(200,0,-100)
-        mv.ciroscopio(20,-1)
-        mv.vaiDrittoPID(900,70)
-        mv.ciroscopio(35,1)
-        mv.vaiDrittoPID(1500,90)
-        return"""
+        mv.avanti(2500)
     if program == 6:
-        """mv.vaiDrittoPID(150, 50)
-        mv.ciroscopio(51, -1)
-        mv.vaiDrittoPID(1400, 50)
-        mv.ciroscopio(60,1)
-        mv.vaiDrittoPID(450,50)
-        mv.ciroscopio(72, 1)
-        mv.vaiDrittoPID(350, 50)
-        mv.muoviMotore(C,-720,100)
-        mv.vaiDrittoPID(390,40)
-        mv.muoviMotore(C,160,-50)
-        mv.ciroscopio(12,1)
-        mv.vaiDrittoPID(230,50)
-        mv.motoriMovimento(-400,10,30)
-        mv.ciroscopio(80, 1)
-        mv.motoriMovimento(1500,-11, 100)
-        return"""
+        mv.avanti(3000)
     if program == 7:
-        """#10° da destra
-        mv.vaiDrittoPID(1730, 50) # partenza
-        mv.motoriMovimento(-250,0,30)
-        mv.ciroscopio(45, 1) # guarda balena
-        mv.vaiDrittoPID(360, 50)
-        mv.motoriMovimento(70,0, 25) # scopa la balena
-        wait(0.5)
-        mv.motoriMovimento(600,0,-75) #torna indietro
-        mv.motoriMovimento(200,90,-50) #curva in retro
-        mv.motoriMovimento(1500,0,-100) #base
-        wait(2.5)
-        mv.motoriMovimento(1100,0,-100) #polipo
-        mv.vaiDrittoPID(850,100)
-        return"""
-    if program == 8:
-        """#2°dalla 2 linea grande
-        schivabarca = avviaMotore(5, -50, "D", self.spike)
-        mv.vaiDrittoPID(1150,50,multithreading=schivabarca)
-        mv.ciroscopio(60,-1)
-        mv.vaiDrittoPID(1150,60)
-        mv.muoviMotore(D,-50,30)
-        wait(1)
-        mv.ciroscopio(61,-1)
-        mv.vaiDrittoPID(400,50)
-        mv.ciroscopio(32,1)
-        mv.vaiDrittoPID(200,40)
-        mv.ciroscopio(34,1)
-        mv.motoriMovimento(-350,0,60)
-        mv.ciroscopio(110,1)
-        return"""
+        mv.avanti(3500)
+    if program == 8:        
+        mv.avanti(4000)
     return
 
 

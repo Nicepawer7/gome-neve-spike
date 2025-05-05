@@ -1,7 +1,8 @@
 # Changelog
-## Versione 0.9.2.69 17:41 Sabato 26/04/25
+## Versione 0.9.2.75 17:41 Sabato 26/04/25
 * **MODIFICHE**
     * Nuova equazione pid nel file apposito
+    * [nuovo sistema di calcolo del pid](https://www.desmos.com/calculator/qmbknfbkgw?lang=it)
 * **COSE DA FARE**
 
 ## Versione 0.9.2.69 17:41 Sabato 26/04/25
