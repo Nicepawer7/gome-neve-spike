@@ -23,7 +23,8 @@
 - [X] rimuovere color sensor e metterlo in un altro file
 - [X] Aggiungere pid al contrario
 - [X] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
-- [ ] Testare il PID e ricalibrarlo meglio di ora
+- [ ] Testare il PID e fare il merge main
+- [ ] Sistemare motori blocco
 - [ ] Documentare la cosa del tempo in millisecondi
 - [ ] Sistemare la documentazione
 - [ ] Capire dov'è il Massachussets
