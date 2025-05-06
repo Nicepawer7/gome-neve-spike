@@ -38,10 +38,10 @@
 - controllo anti-blocco vaidrittoPID()
 - Microaggiustamenti in base alla batteria (8300-8000 mV)
 - Finire la funzione del machine learning
+- calcolo della posizione 
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
 -  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
-- ~~Pid con dt~~ (time non funziona con i decimi di secondo)
 - ~~Sistemare wait con time.time()~~ (-/)
 
 ## Note di sviluppo/ info-source:
