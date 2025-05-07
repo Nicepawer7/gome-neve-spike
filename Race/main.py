@@ -33,7 +33,7 @@ class Manager:
             elif self.spike.right_button.is_pressed():
                 sleep(0.50)
                 self.programma_selezionato += 1
-                if self.programma_selezionato == 9:
+                if self.programma_selezionato >= 9:
                     print("programma a 9,reset")
                     self.programma_selezionato = 1
                 print("Missione selezionata:" + str(self.programma_selezionato))
@@ -88,7 +88,7 @@ class Movimenti:
         self.pid = self.PID(spike,manager,self)
         self.cr = self.Ciroscopio(spike,self.movement_motors,manager)
 
-    def avanti(self,distanza,verso = 1,velocitàMax = 100,multithreading = None):
+    def avanti(self,distanza,verso = 1,velocitàMax = 90,multithreading = None):
             '''
             distanza:
             velocità:
@@ -118,7 +118,6 @@ class Movimenti:
                 self.spike.light_matrix.show_image("ARROW_N")
 
                 while distanza >= distanzaCompiuta:
-                    print(distanzaCompiuta)
                     if self.spike.left_button.is_pressed():
                         self.manager.skip()
                         self.movement_motors.stop()
@@ -133,7 +132,6 @@ class Movimenti:
                     derivata = (errore - erroreVecchio)/dt
                     erroreVecchio = errore
                     velocità = self.pid.calcoloVelocità(distanzaCompiuta,distanza,velocitàMax)
-                    print(velocità)
                     self.pid.calcoloPID(velocità)
                     correzione = round(errore * self.pid.kp + integrale * self.pid.ki + derivata * self.pid.kd)
                     correzione = max(-100, min(correzione, 100))
@@ -142,7 +140,7 @@ class Movimenti:
                     if distanzaCompiuta == None:
                         distanzaCompiuta = 0.1
 
-
+                print(distanzaCompiuta)
                 self.movement_motors.stop()
                 self.run_multithreading = True
                 self.runSmall = True
@@ -153,7 +151,7 @@ class Movimenti:
                 print("Finito pid")
                 return
 
-    def ciroscopio(self, angolo, verso=1):
+    def ciroscopio(self, angolo, verso=1,maxSpeed = 90,bias = 0):
         if not Manager.stop:
             if verso not in [1, -1]:
                 raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
@@ -170,8 +168,8 @@ class Movimenti:
                         gyroValue = 360 + gyroValue
                     else:
                         prec = gyroValue
-                    speed = self.cr.decelerate(gyroValue,angolo)
-                    self.movement_motors.start_tank_at_power(speed,speed * -1 )
+                    speed = self.cr.decelerate(gyroValue,angolo,maxSpeed)
+                    self.movement_motors.start_tank_at_power(speed,(speed-bias) * -1 )
                     if self.spike.left_button.is_pressed():
                         self.manager.skip()
                         return
@@ -179,17 +177,18 @@ class Movimenti:
                 print("Inizio curva avanti verso sinistra")
                 self.spike.light_matrix.show_image("ARROW_NW")
                 prec = 1 #valore iniziale per il controllo del valore giroscopio precedente
-                while abs(gyroValue) <= angolo: #finchè angolo attuale minore di obbiettivo
+                while abs(gyroValue) <= angolo-1: #finchè angolo attuale minore di obbiettivo
                     gyroValue = self.spike.motion_sensor.get_yaw_angle()#fondamnetalmente normalizzo l'angolo, se il valore precedente è più piccolo sono passato da -180 a 180
                     if prec < gyroValue:
                         gyroValue = 360 - gyroValue
                     else:
                         prec = gyroValue
-                    speed = self.cr.decelerate(gyroValue,angolo)
-                    self.movement_motors.start_tank_at_power(speed * -1, speed)
+                    speed = self.cr.decelerate(gyroValue,angolo,maxSpeed)
+                    self.movement_motors.start_tank_at_power((speed - bias)* -1, speed)
                     if self.spike.left_button.is_pressed():
                         self.manager.skip()
                         return
+        print("Gyro" + str(gyroValue))
         self.movement_motors.stop()
         print("Fine curva avanti")
         self.manager.wait(0.2)
@@ -208,7 +207,7 @@ class Movimenti:
         self.movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
         return
 
-    def muoviMotore(self,porta,gradi,velocità = 100,direzione = 1):
+    def muoviMotore(self,porta,gradi,direzione = 1,velocità = 100):
         """
         porta = (C,D)
         gradi = distanza
@@ -262,7 +261,7 @@ class Movimenti:
                     velocitàMax = 200
                 velocità = cos((distanzaCompiuta+d/2)*(2*pi)/d)*((velocitàMax-velocitàMin)/2)+((velocitàMax+velocitàMin)/2)
                 if velocità > 100:
-                    velocità = 100 
+                    velocità = 100
                 #potrei frenare con velocità più bassa di quella necessaria a muoversi
                 return int(velocità)
 
@@ -339,19 +338,21 @@ class Movimenti:
             self.movement_motors = movement_motors
             self.manager = manager
 
-        def decelerate(self,degrees,setdegrees,maxSpeed=100):
+        def decelerate(self,degrees,setdegrees,maxSpeed):
             vIncrease = (maxSpeed-30)/2
             vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
             if not Manager.stop:
                 if self.spike.left_button.is_pressed():
                     self.manager.skip()
                     return
-                elif degrees <= setdegrees-setdegrees/3 and setdegrees > 30 and setdegrees < 260:
+                if degrees <= setdegrees-setdegrees/3 and setdegrees >= 30 and setdegrees < 260:
                     speed = cos(degrees*(pi/(setdegrees-(setdegrees/3))))*vIncrease+vMove
+                elif setdegrees < 30 or 5 >= setdegrees - degrees:
+                    speed = 25
                 elif setdegrees > 260:
                     speed = cos(degrees*(pi/(setdegrees)))*vIncrease+vMove
-                else:
-                    speed = 30
+
+                print("velocità" + str(speed))
             return int(speed)
 
 def race(program):
@@ -359,21 +360,37 @@ def race(program):
     print("Avvio missione " + str(program))
     if program == 1:
         # primo quadrato piccolo rosso da sinistra
-        mv.avanti(500)
-        #mv.muoviMotore(D,300,85,direzione=1)
+        mv.avanti(900)
+        mv.muoviMotore(D,300,85,direzione=1)
     if program == 2:
-        mv.avanti(1000)
+        # 2° piccolo da destra base blu |TMG :)
+        mv.avanti(300)
+        mv.ciroscopio(30,-1)
+        mv.avanti(1330)
+        mv.ciroscopio(30,-1,maxSpeed=30)
+        mv.avanti(500)
+        mv.ciroscopio(27,-1)
+        mv.avanti(800,-1,70)
+        mv.muoviMotore(C,200)
+        mv.ciroscopio(5,1)
+        mv.avanti(1600)
+        mv.muoviMotore(D,600,-1)
+        mv.avanti(500)
+        mv.muoviMotore(D,600)
+        mv.ciroscopio(20,-1)
+        mv.motoriMovimento(2500,-30)
+        exit()
     if program == 3:
-        mv.avanti(1500)
+        pass
     if program == 4:
-        mv.avanti(2000)
+        pass
     if program == 5:
         mv.avanti(2500)
     if program == 6:
         mv.avanti(3000)
     if program == 7:
         mv.avanti(3500)
-    if program == 8:        
+    if program == 8:
         mv.avanti(4000)
     return
 
