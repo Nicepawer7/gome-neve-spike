@@ -1,4 +1,4 @@
-# LEGO type:advanced slot:0
+# LEGO type:advanced slot:0 autostart
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
@@ -398,15 +398,15 @@ def race(program):
         mv.motoriMovimento(-300,0,50)
         mv.oipocsoric(88,1)
         multi = avviaMotore(45,20,"D", spike)
-        mv.vaiDrittoPID(100,50,multi)
-        mv.motoriMovimento(200,0,-50)
-        wait(0.1)
-        mv.muoviMotore(D,45,-20)
-        mv.ciroscopio(5,-1)
-        mv.vaiDrittoPID(150, 50)
+        mv.vaiDrittoPID(150,50,multi)
+        mv.muoviMotore(D,45,30)
+        wait(0.3)
         mv.ciroscopio(5,1)
-        mv.muoviMotore(D,40,100) 
-        mv.motoriMovimento(2500,-10,-100)
+        mv.motoriMovimento(2000,-10,-100)
+        wait(2)
+        mv.vaiDrittoPID(2000,70)
+        mv.ciroscopio(45,-1)
+        exit()
         return
     if program == 3:
         #alzare la vela della barca + squalo 4° fine da destra
