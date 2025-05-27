@@ -389,28 +389,46 @@ def race(program):
         mv.motoriMovimento(1600,0,-90)
         return
     if program == 2:
-        #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
+        #sub,squalo,barriere | 3° grossa da sinistra (base blu) | TMG :)
         multi = avviaMotore(80,20,"D", spike)
         mv.vaiDrittoPID(1450,50,multi)
         mv.ciroscopio(90,-1)
         mv.vaiDrittoPID(120,30)
-        mv.muoviMotore(D,45,-20) 
+        mv.muoviMotore(D,50,-20) 
         mv.motoriMovimento(-300,0,50)
         mv.oipocsoric(88,1)
         multi = avviaMotore(45,20,"D", spike)
         mv.vaiDrittoPID(150,50,multi)
-        mv.muoviMotore(D,45,30)
-        wait(0.3)
-        mv.ciroscopio(5,1)
-        mv.motoriMovimento(2000,-10,-100)
-        wait(2)
-        mv.vaiDrittoPID(2000,70)
-        mv.ciroscopio(45,-1)
+        #mv.muoviMotore(D,45,30)
+        wait(0.1)
+        mv.motoriMovimento(-250,0,50)
+        mv.ciroscopio(58,-1)
+        multi = mv.muoviMotore(D,45,-25)
+        mv.vaiDrittoPID(320,50,multithreading=multi)
+        mv.muoviMotore(D,65,100)
+        mv.ciroscopio(55,1)
+        mv.motoriMovimento(1650,-10,-100)
+
+
+
+
         exit()
         return
     if program == 3:
-        #alzare la vela della barca + squalo 4° fine da destra
-        multithreading = avviaMotore(120, -50, 'D', spike)
+        # corallo e barca | 2° grossa sinistra | TMG :)
+        mv.vaiDrittoPID(1040,50)
+        multi = avviaMotore(720,30,'C',spike)
+        mv.vaiDrittoPID(150,40,multithreading=multi)
+        multi = mv.muoviMotore(C,180,30)
+        mv.vaiDrittoPID(135,40,multithreading=multi)
+        mv.motoriMovimento(208,0,-40)
+        mv.ciroscopio(90,1)
+
+
+        exit()
+        
+
+        """multithreading = avviaMotore(120, -50, 'D', spike)
         mv.vaiDrittoPID(1520, 50, multithreading=multithreading)
         mv.ciroscopio(90, 1)
         mv.vaiDrittoPID(615 , 50)
@@ -422,7 +440,7 @@ def race(program):
         mv.muoviMotore(D,150, 80)
         mv.motoriMovimento(300,-70,-50)
         mv.muoviMotore(D,90, -100)
-        mv.motoriMovimento(1300,0,-100)
+        mv.motoriMovimento(1300,0,-100)"""
         return
     if program == 4:
         #2° fine da 2° grande da sinistra?
