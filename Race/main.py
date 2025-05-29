@@ -421,7 +421,7 @@ def race(program):
         mv.vaiDrittoPID(150,40,multithreading=multi)
         multi = mv.muoviMotore(C,180,30)
         mv.vaiDrittoPID(135,40,multithreading=multi)
-        mv.motoriMovimento(208,0,-40)
+        mv.motoriMovimento(190,0,-40)
         mv.ciroscopio(90,1)
 
 
@@ -443,14 +443,33 @@ def race(program):
         mv.motoriMovimento(1300,0,-100)"""
         return
     if program == 4:
-        #2° fine da 2° grande da sinistra?
-        mv.vaiDrittoPID(400, 50)
-        wait(0.2)
-        mv.motoriMovimento(450,0,-100)
+        #riempimento | linea di fondo verticale | TMG :)
+        mv.vaiDrittoPID(200, 50)
+        mv.motoriMovimento(200,0,-50)
         return
     if program == 5:
-        #5° da sinistra
-    #2° linea fine
+        #barca tutta verso di noi |3° grossa da destra | TMG :)
+        multi= mv.muoviMotore(D,90,-50)
+        mv.vaiDrittoPID(318,40,multithreading=multi)
+        mv.ciroscopio(90,1)
+        mv.vaiDrittoPID(480,50)
+        mv.muoviMotore(D,69,80)
+        mv.vaiDrittoPID(1000,70)
+        mv.muoviMotore(D,45,-70)
+        mv.ciroscopio(63,-1)
+        mv.motoriMovimento(100,0,-50)
+        mv.ciroscopio(63,1)
+        mv.motoriMovimento(240,0,-50)
+        mv.muoviMotore(D,70,70)
+        mv.vaiDrittoPID(430,50)
+        mv.muoviMotore(C,90,-80)
+        mv.motoriMovimento(400,0,-50)
+
+        exit()
+
+
+        """  #5° da sinistra
+        #2° linea fine
         mv.muoviMotore(D,40 , -80)
         mv.vaiDrittoPID(320, 40)
         mv.ciroscopio(90, 1)
@@ -472,7 +491,7 @@ def race(program):
         mv.vaiDrittoPID(900,70)
         mv.ciroscopio(35,1)
         mv.vaiDrittoPID(1500,90)
-        return
+        return"""
     if program == 6:
         mv.vaiDrittoPID(150, 50)
         mv.ciroscopio(51, -1)
