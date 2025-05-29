@@ -421,8 +421,13 @@ def race(program):
         mv.vaiDrittoPID(150,40,multithreading=multi)
         multi = mv.muoviMotore(C,180,30)
         mv.vaiDrittoPID(135,40,multithreading=multi)
-        mv.motoriMovimento(190,0,-40)
+        mv.motoriMovimento(200,0,-40)
         mv.ciroscopio(90,1)
+        mv.vaiDrittoPID(480,50)
+        mv.muoviMotore(D,100,30)
+        mv.motoriMovimento(400,0,-50)
+        mv.ciroscopio(120,1)
+        mv.vaiDrittoPID(920,70)
 
 
         exit()
