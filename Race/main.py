@@ -456,19 +456,24 @@ def race(program):
         #barca tutta verso di noi |3° grossa da destra | TMG :)
         multi= mv.muoviMotore(D,90,-50)
         mv.vaiDrittoPID(318,40,multithreading=multi)
-        mv.ciroscopio(90,1)
-        mv.vaiDrittoPID(480,50)
+        mv.ciroscopio(92,1)
+        mv.vaiDrittoPID(460,50)
         mv.muoviMotore(D,69,80)
         mv.vaiDrittoPID(1000,70)
         mv.muoviMotore(D,45,-70)
         mv.ciroscopio(63,-1)
-        mv.motoriMovimento(100,0,-50)
-        mv.ciroscopio(63,1)
-        mv.motoriMovimento(240,0,-50)
+        mv.motoriMovimento(80,0,-50)
+        mv.ciroscopio(59,1)
+        mv.motoriMovimento(280,0,-50)
         mv.muoviMotore(D,70,70)
-        mv.vaiDrittoPID(430,50)
+        mv.vaiDrittoPID(480,50)
         mv.muoviMotore(C,90,-80)
-        mv.motoriMovimento(400,0,-50)
+        mv.motoriMovimento(400,0,-15)
+        mv.muoviMotore(D,90,-70)
+        mv.ciroscopio(35,-1)
+        mv.vaiDrittoPID(780,50)
+        mv.ciroscopio(60,1)
+        mv.vaiDrittoPID(1300,90)
 
         exit()
 
@@ -498,6 +503,7 @@ def race(program):
         mv.vaiDrittoPID(1500,90)
         return"""
     if program == 6:
+        # 2° grande nera sx 
         mv.vaiDrittoPID(150, 50)
         mv.ciroscopio(51, -1)
         mv.vaiDrittoPID(1400, 50) 
@@ -507,15 +513,25 @@ def race(program):
         mv.vaiDrittoPID(350, 50) 
         mv.muoviMotore(C,-720,100)
         mv.vaiDrittoPID(390,40)
-        mv.muoviMotore(C,160,-50)
+        mv.muoviMotore(C,250,-50)
         mv.ciroscopio(12,1)
         mv.vaiDrittoPID(230,50)
-        mv.motoriMovimento(-400,10,30)
-        mv.ciroscopio(80, 1) 
-        mv.motoriMovimento(1500,-11, 100)            
+        mv.motoriMovimento(-400,0,30)
+        mv.ciroscopio(55,1)
+        mv.vaiDrittoPID(200,50)
+        mv.ciroscopio(35,1)
+        mv.motoriMovimento(1050,-20,70)
+        wait(2.5)
+        mv.motoriMovimento(1100,0,-70)
+        mv.vaiDrittoPID(1120,70)
+
+
+        exit()
+               
         return
     if program == 7:
         #10° da destra
+
         """
         mv.vaiDrittoPID(1730, 50) # partenza
         mv.motoriMovimento(-250,0,30)
@@ -538,9 +554,7 @@ def race(program):
         mv.motoriMovimento(600,0,-75) #torna indietro
         mv.motoriMovimento(200,90,-50) #curva in retro
         mv.motoriMovimento(1500,0,-100) #base 
-        wait(2.5)
-        mv.motoriMovimento(1100,0,-100) #polipo
-        mv.vaiDrittoPID(850,100)
+    
         return
     if program == 8:
         #2°  dalla 2 linea grande
