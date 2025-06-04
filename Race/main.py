@@ -530,8 +530,7 @@ def race(program):
                
         return
     if program == 7:
-        #10° da destra
-
+        #3° da sinistra 
         """
         mv.vaiDrittoPID(1730, 50) # partenza
         mv.motoriMovimento(-250,0,30)
@@ -545,16 +544,26 @@ def race(program):
         wait(2.5)
         mv.motoriMovimento(1100,0,-80) #polipo
         mv.vaiDrittoPID(850,100)"""
-        mv.vaiDrittoPID(1730, 50) # partenza
+        schiva = avviaMotore(90, 30, "D", spike)
+        mv.vaiDrittoPID(1730, 50, multithreading=schiva) # partenza
         mv.motoriMovimento(-250,0,30)
-        mv.ciroscopio(45, 1) # guarda balena
-        mv.vaiDrittoPID(360, 50)
-        mv.motoriMovimento(70,0, 25) # scopa la balena
+        mv.ciroscopio(43, 1) # guarda balena
+        mv.vaiDrittoPID(370, 40,)
         wait(0.5)
-        mv.motoriMovimento(600,0,-75) #torna indietro
-        mv.motoriMovimento(200,90,-50) #curva in retro
-        mv.motoriMovimento(1500,0,-100) #base 
-    
+        mv.motoriMovimento(480,0,-75) #torna indietro
+        mv.motoriMovimento(200,110,-50) #curva in retro
+        mv.muoviMotore(D, 110, -80)
+        mv.motoriMovimento(340,0,-40)
+        mv.muoviMotore(D, 110, 50)
+        mv.vaiDrittoPID(350,70)
+        mv.ciroscopio(50,-1)
+        mv.vaiDrittoPID(1100,70)
+        mv.motoriMovimento(400,0,-70)
+        mv.muoviMotore(motoreDestro,170,-50)
+        multi= mv.muoviMotore(D,100,50)
+        mv.vaiDrittoPID(400,60,multithreading=multi)
+
+        exit()
         return
     if program == 8:
         #2°  dalla 2 linea grande
