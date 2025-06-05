@@ -530,7 +530,7 @@ def race(program):
                
         return
     if program == 7:
-        #3° da sinistra 
+        #3° da sinistra(1° grossa da sinistra) 
         """
         mv.vaiDrittoPID(1730, 50) # partenza
         mv.motoriMovimento(-250,0,30)
@@ -550,18 +550,36 @@ def race(program):
         mv.ciroscopio(43, 1) # guarda balena
         mv.vaiDrittoPID(370, 40,)
         wait(0.5)
-        mv.motoriMovimento(480,0,-75) #torna indietro
-        mv.motoriMovimento(200,110,-50) #curva in retro
+        mv.motoriMovimento(520,0,-75) #torna indietro
+        mv.ciroscopio(90,-1)
         mv.muoviMotore(D, 110, -80)
-        mv.motoriMovimento(340,0,-40)
+        mv.motoriMovimento(380,0,-40)
         mv.muoviMotore(D, 110, 50)
-        mv.vaiDrittoPID(350,70)
-        mv.ciroscopio(50,-1)
-        mv.vaiDrittoPID(1100,70)
-        mv.motoriMovimento(400,0,-70)
-        mv.muoviMotore(motoreDestro,170,-50)
-        multi= mv.muoviMotore(D,100,50)
-        mv.vaiDrittoPID(400,60,multithreading=multi)
+        mv.vaiDrittoPID(560,70)
+        mv.ciroscopio(35,-1)
+        mv.vaiDrittoPID(650,70)
+        mv.ciroscopio(17,-1)
+        mv.vaiDrittoPID(250,50)
+        mv.ciroscopio(100,1)
+        mv.motoriMovimento(100,0,-50)
+        mv.muoviMotore(D,110,70)
+        mv.muoviMotore(C,90,-70)
+        """mv.ciroscopio(20,1)
+        mv.motoriMovimento(500,0,-50)
+        mv.ciroscopio(25,1)
+        mv.vaiDrittoPID(560,50)
+        mv.muoviMotore(D,60,-50)
+        wait(1.0)
+        mv.motoriMovimento(500,0,-70)
+        mv.motoriMovimento(470,0,-70)
+        mv.ciroscopio(33,1)
+        mv.muoviMotore(D,108,50)
+        mv.vaiDrittoPID(230,50)
+        mv.muoviMotore(D,43,-50)
+        wait(1.0)
+        mv.motoriMovimento(350,0,-70)
+        mv.muoviMotore(motoreDestro,400,50)"""
+  
 
         exit()
         return
