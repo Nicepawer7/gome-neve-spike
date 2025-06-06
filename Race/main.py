@@ -397,7 +397,7 @@ def race(program):
         mv.muoviMotore(D,50,-20) 
         mv.motoriMovimento(-300,0,50)
         mv.oipocsoric(88,1)
-        multi = avviaMotore(45,20,"D", spike)
+        multi = avviaMotore(47,20,"D", spike)
         mv.vaiDrittoPID(150,50,multi)
         #mv.muoviMotore(D,45,30)
         wait(0.1)
@@ -407,12 +407,12 @@ def race(program):
         mv.vaiDrittoPID(320,50,multithreading=multi)
         mv.muoviMotore(D,65,100)
         mv.ciroscopio(55,1)
-        mv.motoriMovimento(1650,-10,-100)
+        mv.motoriMovimento(150,-10,-100)
 
 
 
 
-        exit()
+        
         return
     if program == 3:
         # corallo e barca | 2° grossa sinistra | TMG :)
@@ -430,7 +430,7 @@ def race(program):
         mv.vaiDrittoPID(920,70)
 
 
-        exit()
+        
         
 
         """multithreading = avviaMotore(120, -50, 'D', spike)
@@ -475,7 +475,7 @@ def race(program):
         mv.ciroscopio(60,1)
         mv.vaiDrittoPID(1300,90)
 
-        exit()
+        
 
 
         """  #5° da sinistra
@@ -526,7 +526,7 @@ def race(program):
         mv.vaiDrittoPID(1120,70)
 
 
-        exit()
+        
                
         return
     if program == 7:
@@ -555,21 +555,32 @@ def race(program):
         mv.muoviMotore(D, 110, -80)
         mv.motoriMovimento(380,0,-40)
         mv.muoviMotore(D, 110, 50)
-        mv.vaiDrittoPID(560,70)
-        mv.ciroscopio(35,-1)
-        mv.vaiDrittoPID(650,70)
+        mv.vaiDrittoPID(560,50)
+        mv.ciroscopio(39,-1)
+        mv.vaiDrittoPID(1000,50)
+        mv.ciroscopio(87,1)
+        mv.muoviMotore(C,100,-70)
+        mv.muoviMotore(D,140,50)
+        mv.vaiDrittoPID(100,50)
+        mv.muoviMotore(C,110,100)
+        mv.vaiDrittoPID(110,50)
+        mv.muoviMotore(D,60,-50)
+        wait(1.0)
+        mv.motoriMovimento(700,50,-50)
+        
+        """mv.vaiDrittoPID(650,70)
         mv.ciroscopio(17,-1)
         mv.vaiDrittoPID(250,50)
         mv.ciroscopio(95,1)
         mv.motoriMovimento(95,0,-50)
         mv.muoviMotore(D,140,70)
-        mv.muoviMotore(C,90,-70)
+        mv.muoviMotore(C,100,-70)
         mv.vaiDrittoPID(200,50)
         mv.muoviMotore(C,120,100)
         mv.ciroscopio(15,-1)
-        mv.muoviMotore(D,90,-70)
+        mv.muoviMotore(D,70,-50)
         wait(1.0)
-        """mv.ciroscopio(20,1)
+        mv.ciroscopio(20,1)
         mv.motoriMovimento(500,0,-50)
         mv.ciroscopio(25,1)
         mv.vaiDrittoPID(560,50)
@@ -586,7 +597,7 @@ def race(program):
         mv.muoviMotore(motoreDestro,400,50)"""
   
 
-        exit()
+        
         return
     if program == 8:
         #2°  dalla 2 linea grande
