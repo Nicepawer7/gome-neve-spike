@@ -1,4 +1,5 @@
 # LEGO type:advanced slot:0 autostart
+# daje roma
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
