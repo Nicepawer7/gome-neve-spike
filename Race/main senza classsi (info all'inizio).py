@@ -1,9 +1,14 @@
-# LEGO type:advanced slot:0
-import sys, time, hub # type: ignore
+# LEGO type:advanced slot:0 autostart
+"""questo file al momento (13/04/25) contiene una versione funzionante del robot 
+che però non è fondamentalmente strutturata a classi come il file ora intittolato main
+proabilmente questo file prima o poi scomparirà"""
+from sys import exit
+import hub # type: ignore
+from time import sleep
 from spike import PrimeHub, Motor, MotorPair, ColorSensor # type: ignore
 from hub import battery # type: ignore
 from math import cos
-import matplotlib.pyplot as plt
+from math import sqrt as radice
 
 spike = PrimeHub()
 colors = ('green','red','blue','yellow','orange','pink','violet','azure')
@@ -14,11 +19,9 @@ C = Motor('C')
 D = Motor('D')
 colorSensor = ColorSensor('E')
 pi = 3.141
-maxTurnspeed = 100
 Kp = 0
 Ki = 0
 Kd = 0
-kTurn = 0.10
 programma_selezionato = 1
 stop = False
 run_multithreading = True
@@ -30,18 +33,19 @@ def skip():
     programma_selezionato -= 1
     stop = True
     spike.light_matrix.show_image("NO")
-    time.sleep(0.30)
+    movement_motors.stop()
+    sleep(0.30)
 
 class bcolors:
-        BATTERY = '\033[32m'
-        BATTERY_LOW = '\033[31m'
-        ENDC = '\033[0m'
+    BATTERY = '\033[32m'
+    BATTERY_LOW = '\033[31m'
+    ENDC = '\033[0m'
 
 if battery.voltage() < 8000:
     print(bcolors.BATTERY_LOW + "batteria scarica: " + str(battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ bcolors.ENDC)
 else:
     print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)
-
+    
 class Movimenti: #classe movimenti
     def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
         """
@@ -54,7 +58,7 @@ class Movimenti: #classe movimenti
         self.motoreDestro = Motor(motoreDestro)
         self.movement_motors = movement_motors
 
-    def vaiDrittoPID(self, distanza, velocità, multithreading = None):
+    def vaiDrittoPID(self, distanza, multithreading = None):
         '''
         distanza:
         velocità:
@@ -91,7 +95,6 @@ class Movimenti: #classe movimenti
                 angolo = spike.motion_sensor.get_yaw_angle()
                 distanzaCompiuta = ottieniDistanzaCompiuta(self)
 
-                calcoloPID(velocità)
                 errore = angolo - target
                 integrale += errore
                 derivata = errore - erroreVecchio
@@ -99,7 +102,8 @@ class Movimenti: #classe movimenti
                 correzione = (errore * Kp + integrale * Ki + derivata * Kd)
                 correzione = max(-100, min(correzione, 100))
                 erroreVecchio = errore
-
+                velocità = calcoloVelocità(int(distanzaCompiuta),distanza)
+                calcoloPID(velocità)
                 self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)
                 if distanzaCompiuta == None:
                     distanzaCompiuta = 0.1
@@ -114,77 +118,89 @@ class Movimenti: #classe movimenti
             print("Finito pid")
             return
     
-    def ciroscopio(self, angolo, verso):
+    def ciroscopio(self, angolo, verso=1):
         global gyroValue, stop
-        global gradiAttuale
-        gradiAttuale = []
-        global vGraph
-        vGraph = []
         if not stop:
             if verso not in [1, -1]:
                 raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
             resetGyroValue()
-            target = (normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
+                print("Inizio curva avanti verso destra")
+                prec = -1 #valore iniziale per il controllo del valore precedente
                 spike.light_matrix.show_image("ARROW_NE")
-                while gyroValue < target - 1:
+                while gyroValue <= angolo:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
-                    speed = decelerate(gyroValue,angolo) #funzione grafico
-                    print("Velocità della ruota dominante: " + str(speed))
-                    movement_motors.start_tank_at_power(speed,(speed- 5) * -1 )
+                    if prec > gyroValue:
+                        gyroValue = 360 + gyroValue
+                    else:
+                        prec = gyroValue
+                    speed = decelerate(gyroValue,angolo)
+                    movement_motors.start_tank_at_power(speed,speed * -1 )
                     if self.spike.left_button.is_pressed():
                         skip()
-                        movement_motors.stop()
                         return
             elif verso == -1:                
+                print("Inizio curva avanti verso sinistra")
                 spike.light_matrix.show_image("ARROW_NW")
-                movement_motors.start_tank_at_power((speed-10) * -1, speed)
-                while gyroValue > target + 1:
+                prec = 1 #valore iniziale per il controllo del valore precedente
+                while abs(gyroValue) <= angolo:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    if prec < gyroValue:
+                        gyroValue = 360 - gyroValue
+                    else:
+                        prec = gyroValue
+                    speed = decelerate(gyroValue,angolo)
+                    movement_motors.start_tank_at_power(speed * -1, speed)
                     if self.spike.left_button.is_pressed():
                         skip()
-                        movement_motors.stop()
                         return
-            print("Grafico: ")
-            graph(angolo)
             movement_motors.stop()
+            print("Fine curva avanti")
             wait(0.2)
             return
 
-    def oipocsoric(self, angolo, verso):
+    def oipocsoric(self, angolo, verso=1):
         global gyroValue, stop
         if not stop:
             if verso not in [1, -1]:
                 raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
             resetGyroValue()
-            target = (normalize_angle(angolo)) * verso
             gyroValue = spike.motion_sensor.get_yaw_angle()
             if verso == 1:
+                print("Inizio curva indietro verso destra")
+                prec = -1
                 spike.light_matrix.show_image("ARROW_SE")
-                while gyroValue < target - 1:
+                while gyroValue <= angolo:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    if prec > gyroValue:
+                        gyroValue = 360 + gyroValue
+                    else:
+                        prec = gyroValue
                     speed = decelerate(gyroValue,angolo)
-                    print("Velocità della ruota dominante: " + str(speed))
-                    movement_motors.start_tank_at_power(speed-5, speed * -1)
+                    movement_motors.start_tank_at_power(speed, speed * -1)
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
                         return
             elif verso == -1:
+                print("Inizio curva indietro verso sinistra")
                 spike.light_matrix.show_image("ARROW_SW")
-                while gyroValue > target + 1:
+                prec = 1
+                while abs(gyroValue) <= angolo + 1:
                     gyroValue = spike.motion_sensor.get_yaw_angle()
+                    if prec < gyroValue:
+                        gyroValue = 360 - gyroValue
+                    else:
+                        prec = gyroValue
                     speed = decelerate(gyroValue,angolo)
-                    print("Velocità della ruota dominante: " + str(speed))
-                    movement_motors.start_tank_at_power(speed * -1, speed - 5)
+                    movement_motors.start_tank_at_power(speed * -1, speed)
                     if self.spike.left_button.is_pressed():
                         skip()
                         movement_motors.stop()
                         return
-            print("Grafico: ")
-            graph(angolo)
-            movement_motors.stop() #!!!
+            movement_motors.stop()
+            print("Fine curva dietro")
             wait(0.2)
             return
 
@@ -291,6 +307,7 @@ class Movimenti: #classe movimenti
         velocità"""
 
         if self.spike.left_button.is_pressed():
+            porta.stop()
             skip()
             return
         if not stop  and (porta == C or porta == D):
@@ -303,34 +320,37 @@ class Movimenti: #classe movimenti
 
 
 
-def decelerate(degrees,setdegrees): 
-    # potrebbe essere un idea migliore la radice
-    vIncrease = (maxTurnspeed-30)/2
-    vMove = 30 + vIncrease # la posizione della funzione risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w + t
-    speed = cos(degrees*(pi/setdegrees))*vIncrease+vMove
-    vGraph.append(speed)
-    gradiAttuale.append(degrees)
-    print(speed)
-    return speed
-
-def graph(degrees):
-    fig, ax = plt.subplots()
-    ax.axhline(y=30, color="black")
-    ax.axhline(y=maxTurnspeed, color="black")
-    ax.axvline(color="black")
-    ax.axvline(x = degrees , color="black")
-    ax.plot(gradiAttuale,vGraph)
-    ax.set(xlabel='Gradi di rotazione', ylabel='Velocità',
-        title='Funzione della velocità in relazione alla rotazione mancante')
-    ax.grid()
-    plt.show()
-    return
+def decelerate(degrees,setdegrees,maxSpeed=100): 
+    global stop
+    vIncrease = (maxSpeed-30)/2
+    vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
+    if not stop:
+        if spike.left_button.is_pressed():
+            skip()
+            return
+        elif degrees <= setdegrees-setdegrees/4 and setdegrees > 30 and setdegrees < 260:
+            speed = cos(degrees*(pi/(setdegrees-(setdegrees/4))))*vIncrease+vMove
+        elif setdegrees > 260:
+            speed = cos(degrees*(pi/(setdegrees)))*vIncrease+vMove
+        else:
+            speed = 30
+    return int(speed)
 
 def accelerate():  
     pass  
 """def map_range(x,in_min,in_max,out_min,out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min"""
     
+def calcoloVelocità(percorsa,distanza,velocitàMax = 70):
+    kCurva = distanza/4
+    print("Percorso: " + str(percorsa) + "Kcurva: " + str(kCurva))
+    if percorsa < kCurva:
+        velocità = radice(((((percorsa-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30
+    if kCurva <= percorsa <= distanza-kCurva:
+        velocità = velocitàMax
+    if distanza-kCurva<= percorsa <= distanza:
+        velocità = radice(((((percorsa-distanza+kCurva)**2)/(kCurva*2)**2)-1)*(-(velocitàMax-30)**2))+30
+    return int(velocità)
 def resetGyroValue():
     global gyroValue, stop, spike
     if spike.left_button.is_pressed():
@@ -347,19 +367,22 @@ def calcoloPID(velocità):
     if spike.left_button.is_pressed():
         skip()
         return
-
-    if velocità >= 75:
-        Kp = 14
-        Ki = 0
-        Kd = 3
+    if velocità == 100:
+        Kp = 13
+        Ki = 0.4
+        Kd = 1
+    elif 100 > velocità >= 75:
+        Kp = ""
+        Ki = ""
+        Kd = ""
     elif 40 <= velocità < 75:
-        Kp = 18.4
-        Ki = 0
-        Kd = 5
+        Kp = ""
+        Ki = ""
+        Kd = ""
     elif velocità < 40:
-        Kp = 28
-        Ki = 0.25
-        Kd = 1.5
+        Kp = ""
+        Ki = ""
+        Kd = ""
 
 def avviaMotore(gradi, velocità, porta, spike):
     global runSmall, run_multithreading, stop
@@ -400,19 +423,6 @@ def ottieniDistanzaCompiuta(data):
 
     return distanzaCompiuta
 
-def normalize_angle(angle):
-    global stop, spike
-
-    if spike.left_button.is_pressed():
-        skip()
-        return
-
-    while angle > 180:
-        angle -= 360
-    while angle < -180:
-        angle += 360
-    return angle
-
 def wait(timer):
     if spike.left_button.is_pressed():
         print("Chiamo skip")
@@ -420,7 +430,7 @@ def wait(timer):
         return
     if not stop:
         spike.light_matrix.show_image("TORTOISE")
-        time.sleep(timer)
+        sleep(timer)
     return
 
 
@@ -430,9 +440,8 @@ def race(program):
     stop = False
     print("Avvio missione " + str(program))
     if program == 1:
-        mv.vaiDrittoPID(1300, 65)
-        mv.motoriMovimento(1600,0,-90)
-        sys.exit("gay")
+        mv.vaiDrittoPID(900)
+        mv.muoviMotore(C,200,50)
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -570,10 +579,10 @@ def main():
     print("Waiting for start")
     while True:
         #selezione programma
-        if spike.right_button.is_pressed() and spike.left_button.is_pressed():
+        if spike.right_button.was_pressed() and spike.left_button.was_pressed():
             break
         elif spike.right_button.is_pressed():
-            time.sleep(0.50)
+            sleep(0.50)
             programma_selezionato += 1
             if programma_selezionato == 9:
                 print("programma a 9,reset")
@@ -583,7 +592,7 @@ def main():
             spike.status_light.on(colors[programma_selezionato-1])
         #esecuzione programma
         elif spike.left_button.is_pressed():
-            time.sleep(0.50)
+            sleep(0.50)
             print("AVVIO il programma: " + str(programma_selezionato))
             race(programma_selezionato)
             programma_selezionato += 1
@@ -595,4 +604,4 @@ def main():
             spike.status_light.on(colors[programma_selezionato-1])
 main()
 
-sys.exit("Normalmente questo messaggio non verrà mai visto")
+exit("Normalmente questo messaggio non verrà mai visto")

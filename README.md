@@ -10,7 +10,7 @@
 ### Da Fare/concludere:
 
 ### Possibilmente da sistemare: 
-
+    aggiungere offset per le ruote giroscopio se proprio serve (possibilità di usare giroscopio vecchio)
 ## To-do list:
 - [x] Controllare i parametri e i valori nella funzione 'calcoloPID()' 
 - [x] Testare il funzionamento della funzione 'ottieniDistanzaCompiuta()'
@@ -19,15 +19,30 @@
 - [X] Rimuovere commenti per efficentare memoria
 - [X] Rendere più intutitvo lo stato della missione (numeri display,X quando non annullabile,direzione ecc..)
 - [X] Aggiungere la possibilità di fermare l'esecuzione della singola missione e ripartire
-- [ ] Correggere il PID e ricalibrarlo (aspettare nuovo robot)
-- [ ] Testare coseno Ciroscopio
-- [ ] Testare   main con grafici
+- [X] IMPLEMENTARE LE COSE DI CIRO FATTE A META DIO CA + -Finire Accelerazione-Decelerazione PID
+- [X] rimuovere color sensor e metterlo in un altro file
+- [X] Aggiungere pid al contrario
+- [X] Mettere in sottoclassi le funzioni ausiliarie delle classi pid e ciroscopio
+- [ ] Testare il PID e fare il merge main
+- [ ] Sistemare motori blocco
+- [ ] Documentare la cosa del tempo in millisecondi
+- [ ] Sistemare la documentazione
 - [ ] Capire dov'è il Massachussets
 
 ## Idee:
+- strutturare tutto a moduli e pacchetti, migliore modularita e leggibilità (innit,ecc) --> se fattibile
+-  Alleggerire i moduli importati (es: from hub import motion_sensor)
+- grafici per osservare andamento pid
+- aggiungere gestione async del bottone
+- aggiungere exit con bottone centrale
+- controllo anti-blocco vaidrittoPID()
+- Microaggiustamenti in base alla batteria (8300-8000 mV)
+- Finire la funzione del machine learning
+- calcolo della posizione 
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
 - ~~gestione bottone con threading~~ non supportato
 -  ~~approfondire il simulatore dell' hardware Spike~~ outdated e non funzionante
+<<<<<<< HEAD
 -  Sistema di calcolo della posizione --> Kalman Filter
 - grafici per osservare andamento pid
 - aggiungere gestione async del bottone
@@ -37,8 +52,14 @@
 - Migliorare l'efficacia e la precisione delle curve
 - Migliorare il PID per permettere al robot di andare più veloce
 - Finire la funzione del machine learning
+=======
+- ~~Sistemare wait con time.time()~~ (-/)
+>>>>>>> sviluppo
 
 ## Note di sviluppo/ info-source:
+- [grafico di andamento sinusoidale del pid](https://www.desmos.com/calculator/o4iccwh5g7)
+- [graifico di andamenti su base ellissi del pid (scartato](https://www.desmos.com/calculator/ywmxc36tne)
+- [grafico di andamento del giroscopio](https://www.desmos.com/calculator/yfotatko4e)
 - https://tuftsceeo.github.io/SPIKEPythonDocs/SPIKE2.html#top
 - https://libdoc.fh-zwickau.de/opus4/frontdoor/deliver/index/docId/15400/file/lego_spike_linux.pdf
 - https://github.com/smr99/lego-hub-tk

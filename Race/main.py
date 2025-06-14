@@ -1,401 +1,408 @@
+<<<<<<< HEAD
 # LEGO type:advanced slot:2
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
+=======
+# LEGO type:advanced slot:0 autostart
+from sys import exit
+import hub # type: ignore
+from time import sleep
+from time import ticks_us
+from spike import PrimeHub, Motor, MotorPair # type: ignore
+from hub import battery # type: ignore
+from math import cos
+from math import sqrt as radice
+from math import pi
+>>>>>>> sviluppo
 
-spike = PrimeHub()
-colors = ('green','red','blue','yellow','orange','pink','violet','azure')
-movement_motors = MotorPair('A', 'B')
-motoreSinistro = Motor('A')
-motoreDestro = Motor('B')
 C = Motor('C')
 D = Motor('D')
-colorSensor = ColorSensor('E')
-pi = 3.141
-Kp = 0
-Ki = 0
-Kd = 0
-kTurn = 0.10
-programma_selezionato = 1
-stop = False
-run_multithreading = True
-gyroValue = 0
-runSmall = True
-def skip():
-    global stop
-    global programma_selezionato
-    programma_selezionato -= 1
-    stop = True
-    spike.light_matrix.show_image("NO")
-    movement_motors.stop()
-    time.sleep(0.30)
+spike = PrimeHub()
 
-class bcolors:
+
+
+class Manager:
+    stop = False
+    def __init__(self,spike):
+        self.spike = spike
+        self.colors = ('green','red','blue','yellow','orange','pink','violet','azure')
+        self.programma_selezionato = 1
+        self.battery_manager()
+    def manager(self,):
+        self.spike.light_matrix.write(1)
+        self.spike.status_light.on(self.colors[0])
+        print("Waiting for start")
+        while True:
+            #selezione programma
+            if self.spike.right_button.is_pressed() and self.spike.left_button.is_pressed():
+                break
+            elif self.spike.right_button.is_pressed():
+                sleep(0.50)
+                self.programma_selezionato += 1
+                if self.programma_selezionato >= 9:
+                    print("programma a 9,reset")
+                    self.programma_selezionato = 1
+                print("Missione selezionata:" + str(self.programma_selezionato))
+                self.spike.light_matrix.write(self.programma_selezionato)
+                self.spike.status_light.on(self.colors[self.programma_selezionato-1])
+            #esecuzione programma
+            elif self.spike.left_button.is_pressed():
+                sleep(0.50)
+                print("AVVIO il programma: " + str(self.programma_selezionato))
+                race(self.programma_selezionato)
+                self.programma_selezionato += 1
+                print("Concluso il programma: " + str(self.programma_selezionato))
+                if self.programma_selezionato == 9:
+                    print("programma a 9,reset")
+                    self.programma_selezionato = 1
+                self.spike.light_matrix.write(self.programma_selezionato)
+                self.spike.status_light.on(self.colors[self.programma_selezionato-1])
+
+    def skip(self):
+        self.programma_selezionato -= 1
+        Manager.stop = True
+        self.spike.light_matrix.show_image("NO")
+        Movimenti.movement_motors.stop()
+        sleep(0.30)
+    def wait(self,timer):
+        if self.spike.left_button.is_pressed():
+            print("Chiamo skip")
+            self.skip()
+            return
+        if not Manager.stop:
+            self.spike.light_matrix.show_image("TORTOISE")
+            sleep(timer)
+        return
+    def battery_manager(self):
         BATTERY = '\033[32m'
         BATTERY_LOW = '\033[31m'
         ENDC = '\033[0m'
+        voltage = battery.voltage()
+        if voltage < 8000:
+            print(BATTERY_LOW + "batteria scarica: " + str(voltage) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ ENDC)
+        else:
+            print(BATTERY + "livello batteria: " + str(voltage) + ENDC)
 
-if battery.voltage() < 8000:
-    print(bcolors.BATTERY_LOW + "batteria scarica: " + str(battery.voltage()) + " \n ----------------------------- \n >>>> carica la batteria o cambiala <<<< \n ----------------------------- \n"+ bcolors.ENDC)
-else:
-    print(bcolors.BATTERY + "livello batteria: " + str(battery.voltage()) + bcolors.ENDC)
-
-class Movimenti: #classe movimenti
-    def __init__(self, spike, motoreSinistro, motoreDestro, movement_motors):
-        """
-            Il metodo __init__ in una classe Python è un metodo speciale chiamato costruttore.
-            Viene automaticamente invocato ogni volta che una nuova istanza (oggetto) della classe viene creata.
-            Il suo scopo principale è inizializzare gli attributi dell'oggetto con valori specificati al momento della creazione dell'oggetto.
-        """
+class Movimenti:
+    movement_motors = MotorPair('A', 'B')
+    def __init__(self,spike,manager):
         self.spike = spike
-        self.motoreSinistro = Motor(motoreSinistro)
-        self.motoreDestro = Motor(motoreDestro)
-        self.movement_motors = movement_motors
+        self.manager = manager
+        self.motoreSinistro = Motor('A')
+        self.motoreDestro = Motor('B')
+        self.movement_motors = MotorPair('A', 'B')
+        self.pid = self.PID(spike,manager,self)
+        self.cr = self.Ciroscopio(spike,self.movement_motors,manager)
 
-    def vaiDrittoPID(self, distanza, velocità, multithreading = None):
-        '''
-        distanza:
-        velocità:
-        multithreading:
-            multithreading = avviaMotore(5, 100, 'C')'''
-        global Kp, Ki, Kd
-        global run_multithreading, runSmall, stop
-        if not stop:
-            print("Avvio vai dritto pid")
-            if multithreading == None:
-                run_multithreading = False
+    def avanti(self,distanza,verso = 1,velocitàMax = 90,multithreading = None):
+            '''
+            distanza:
+            velocità:
+            multithreading:
+                multithreading = avviaMotore(5, 100, 'C')'''
+            distanzaCompiuta = 0
+            dt_start = 0
+            self.spike.motion_sensor.reset_yaw_angle()
+            if not Manager.stop:
+                print("Avvio vai dritto pid")
+                if multithreading == None:
+                    self.run_multithreading = False
+                if verso == -1:
+                    self.movement_motors = MotorPair('B','A')
 
-            loop = True
+                errore = 0
+                erroreVecchio = 0
+                integrale = 0
+                derivata = 0
 
-            target = spike.motion_sensor.get_yaw_angle()
-            errore = 0
-            erroreVecchio = 0
-            integrale = 0
-            derivata = 0
-            if distanza < 0:
-                print('ERR: distanza < 0')
-                distanza = abs(distanza)
-            self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
-            self.right_Startvalue = self.motoreDestro.get_degrees_counted()
-            distanzaCompiuta = ottieniDistanzaCompiuta(self)
-            spike.light_matrix.show_image("ARROW_N")
-            while loop:
-                if self.spike.left_button.is_pressed():
-                    skip()
-                    self.movement_motors.stop()
-                    return
-                if run_multithreading:
-                    next(multithreading)
-                angolo = spike.motion_sensor.get_yaw_angle()
-                distanzaCompiuta = ottieniDistanzaCompiuta(self)
+                if distanza < 0:
+                    print('ERR: distanza < 0')
+                    distanza = abs(distanza)
 
-                calcoloPID(velocità)
-                errore = angolo - target
-                integrale += errore
-                derivata = errore - erroreVecchio
+                self.left_startValue = self.motoreSinistro.get_degrees_counted()
+                self.right_startValue = self.motoreDestro.get_degrees_counted()
+                self.spike.light_matrix.show_image("ARROW_N")
 
-                correzione = (errore * Kp + integrale * Ki + derivata * Kd)
-                correzione = max(-100, min(correzione, 100))
-                erroreVecchio = errore
+                while distanza >= distanzaCompiuta:
+                    if self.spike.left_button.is_pressed():
+                        self.manager.skip()
+                        self.movement_motors.stop()
+                        return
+                    if self.run_multithreading:
+                        next(multithreading)
+                    errore = -self.spike.motion_sensor.get_yaw_angle()
+                    distanzaCompiuta = self.pid.ottieniDistanzaCompiuta()
+                    dt = (ticks_us() - dt_start)/1000000
+                    dt_start = ticks_us()
+                    integrale += errore * dt
+                    derivata = (errore - erroreVecchio)/dt
+                    erroreVecchio = errore
+                    velocità = self.pid.calcoloVelocità(distanzaCompiuta,distanza,velocitàMax)
+                    self.pid.calcoloPID(velocità)
+                    correzione = round(errore * self.pid.kp + integrale * self.pid.ki + derivata * self.pid.kd)
+                    correzione = max(-100, min(correzione, 100))
+                    #print("Correzione: " + str(correzione) + " Proporzionale" + str(errore*self.pid.kp) + " Integrale: "+ str(integrale*self.pid.ki) + " Derivata " + str(derivata*self.pid.kd) + " Angolo: " + str(errore))
+                    self.movement_motors.start_at_power(velocità, correzione)
+                    if distanzaCompiuta == None:
+                        distanzaCompiuta = 0.1
 
-                self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)
-                if distanzaCompiuta == None:
-                    distanzaCompiuta = 0.1
-                elif distanzaCompiuta >= distanza:
-                    loop = False
+                print(distanzaCompiuta)
+                self.movement_motors.stop()
+                self.run_multithreading = True
+                self.runSmall = True
+                multithreading = 0
+                self.manager.wait(0.2)
+                if verso == -1:
+                    self.movement_motors = MotorPair('A','B')
+                print("Finito pid")
+                return
 
-            self.movement_motors.stop()
-            run_multithreading = True
-            runSmall = True
-            multithreading = 0
-            wait(0.2)
-            print("Finito pid")
-            return
-    
-    def ciroscopio(self, angolo, verso):
-        global gyroValue, stop
-        if not stop:
+    def ciroscopio(self, angolo, verso=1,maxSpeed = 90,bias = 0):
+        if not Manager.stop:
             if verso not in [1, -1]:
                 raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
-            resetGyroValue()
-            target = (normalize_angle(angolo)) * verso
-            gyroValue = spike.motion_sensor.get_yaw_angle()
+            self.spike.motion_sensor.reset_yaw_angle()
+            gyroValue = self.spike.motion_sensor.get_yaw_angle()
+            angolo -= 2
             if verso == 1:
-                spike.light_matrix.show_image("ARROW_NE")
-                while gyroValue < target - 1:
-                    gyroValue = spike.motion_sensor.get_yaw_angle()
-                    speed = decelerate(gyroValue,angolo)
-                    movement_motors.start_tank_at_power(speed,(speed- 5) * -1 )
+                print("Inizio curva avanti verso destra")
+                prec = -1 #valore iniziale per il controllo del valore precedente
+                self.spike.light_matrix.show_image("ARROW_NE")
+                while gyroValue <= angolo: #finchè angolo attuale minore di obbiettivo
+                    gyroValue = self.spike.motion_sensor.get_yaw_angle()
+                    if prec > gyroValue: #fondamnetalmente normalizzo l'angolo, se il valore precedente è più grande sono passato da 180 a -180
+                        gyroValue = 360 + gyroValue
+                    else:
+                        prec = gyroValue
+                    speed = self.cr.decelerate(gyroValue,angolo,maxSpeed)
+                    self.movement_motors.start_tank_at_power(speed,(speed-bias) * -1 )
                     if self.spike.left_button.is_pressed():
-                        skip()
-                        return
-            elif verso == -1:                
-                spike.light_matrix.show_image("ARROW_NW")
-                while gyroValue > target + 1:
-                    gyroValue = spike.motion_sensor.get_yaw_angle()
-                    speed = decelerate(gyroValue,angolo)
-                    movement_motors.start_tank_at_power((speed-5) * -1, speed)
-                    if self.spike.left_button.is_pressed():
-                        skip()
-                        return
-            movement_motors.stop() # !!!!
-            wait(0.2)
-            return
-
-    def oipocsoric(self, angolo, verso):
-        global gyroValue, stop
-        if not stop:
-            if verso not in [1, -1]:
-                raise ValueError("Il verso deve essere 1 (destra) o -1 (sinistra)")
-            resetGyroValue()
-            target = (normalize_angle(angolo)) * verso
-            gyroValue = spike.motion_sensor.get_yaw_angle()
-            if verso == 1:
-                spike.light_matrix.show_image("ARROW_SE")
-                while gyroValue < target - 1:
-                    gyroValue = spike.motion_sensor.get_yaw_angle()
-                    speed = decelerate(gyroValue,angolo)
-                    movement_motors.start_tank_at_power(speed-5, speed * -1)
-                    if self.spike.left_button.is_pressed():
-                        skip()
-                        movement_motors.stop()
+                        self.manager.skip()
                         return
             elif verso == -1:
-                spike.light_matrix.show_image("ARROW_SW")
-                while gyroValue > target + 1:
-                    gyroValue = spike.motion_sensor.get_yaw_angle()
-                    speed = decelerate(gyroValue,angolo)
-                    movement_motors.start_tank_at_power(speed * -1, speed - 5)
+                print("Inizio curva avanti verso sinistra")
+                self.spike.light_matrix.show_image("ARROW_NW")
+                prec = 1 #valore iniziale per il controllo del valore giroscopio precedente
+                while abs(gyroValue) <= angolo-1: #finchè angolo attuale minore di obbiettivo
+                    gyroValue = self.spike.motion_sensor.get_yaw_angle()#fondamnetalmente normalizzo l'angolo, se il valore precedente è più piccolo sono passato da -180 a 180
+                    if prec < gyroValue:
+                        gyroValue = 360 - gyroValue
+                    else:
+                        prec = gyroValue
+                    speed = self.cr.decelerate(gyroValue,angolo,maxSpeed)
+                    self.movement_motors.start_tank_at_power((speed - bias)* -1, speed)
                     if self.spike.left_button.is_pressed():
-                        skip()
-                        movement_motors.stop()
+                        self.manager.skip()
                         return
-            movement_motors.stop() #!!!
-            wait(0.2)
-            return
-
-    def equazione(self, equazione, distanza_max, velocità, multithreading=None):
-        global Kp
-        global run_multithreading, stop
-        if multithreading == None:
-            run_multithreading = False
-        self.left_Startvalue = self.motoreSinistro.get_degrees_counted()
-        self.right_Startvalue = self.motoreDestro.get_degrees_counted()
-        x = ottieniDistanzaCompiuta(self)
-        while True:
-            if self.spike.left_button.is_pressed():
-                skip()
-                return
-            if run_multithreading:
-                next(multithreading)
-
-            x = ottieniDistanzaCompiuta(self)
-            target = equazione
-            angolo_attuale = spike.motion_sensor.get_yaw_angle()
-            errore = angolo_attuale - target
-            correzione = (errore * Kp)
-            self.movement_motors.start_at_power(int(velocità), int(correzione) * -1)
-            if x >= distanza_max:
-                break
+        print("Gyro" + str(gyroValue))
         self.movement_motors.stop()
-        run_multithreading = True
-        runSmall = True
-        multithreading = 0
+        print("Fine curva avanti")
+        self.manager.wait(0.2)
         return
 
-    def seguiLinea(self, distanza, velocità, lato, multithreading=None):
-        global Kp, Ki, Kd, run_multithreading, runSmall, colorSensor, stop
-
-        if multithreading == None:
-            run_multithreading = False
-
-        errore = 0
-        erroreVecchio = 0
-        integrale = 0
-        derivata = 0
-        loop = True
-
-        if distanza < 0:
-            distanza = abs(distanza)
-
-        invert = 1
-        if lato == 'sinistra':
-            invert = 1
-        elif lato == 'destra':
-            invert = -1
-
-        self.left_Startvalue = self.leftMotor.get_degrees_counted()
-        self.right_Startvalue = self.rightMotor.get_degrees_counted()
-        distanzaCompiuta = ottieniDistanzaCompiuta(self)
-
-        while loop:
-            if self.spike.left_button.is_pressed():
-                skip()
-                return
-
-            if run_multithreading:
-                next(multithreading)
-
-            distanzaCompiuta = ottieniDistanzaCompiuta(self)
-            calcoloPID(velocità)
-            erroreVecchio = errore
-            errore = colorSensor.get_reflected_light() - 50
-            integrale += errore
-            derivata = errore - erroreVecchio
-            correzione = (errore * Kp + integrale * Ki + derivata * Kd) * invert
-            correzione = max(-100, min(correzione, 100))
-            self.movement_motors.start_at_power(int(velocità), int(correzione))
-
-            if distanzaCompiuta >= distanza:
-                loop = False
-
-        self.movement_motors.stop()
-        run_multithreading = True
-        runSmall = True
-        multithreading = 0
-        return
-
-    def motoriMovimento(self, distanza, sterzo, velocità):
-        global stop
-
+    def motoriMovimento(self, distanza, sterzo = 0, velocità = 100):
         if self.spike.left_button.is_pressed():
-            skip()
+            self.manager.skip()
             return
-        if not stop and velocità > 0:
-            spike.light_matrix.show_image("GO_UP")
-        elif not stop and velocità < 0:
-            spike.light_matrix.show_image("GO_DOWN")
+        if not Manager.stop and velocità > 0:
+            self.spike.light_matrix.show_image("GO_UP")
+        elif not Manager.stop and velocità < 0:
+            self.spike.light_matrix.show_image("GO_DOWN")
         else:
             return
-        movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
+        self.movement_motors.move(distanza, unit="degrees", steering=sterzo, speed=velocità)
         return
 
-    def muoviMotore(self,porta,gradi,velocità):
+    def muoviMotore(self,porta,gradi,direzione = 1,velocità = 100):
         """
         porta = (C,D)
         gradi = distanza
         velocità"""
 
         if self.spike.left_button.is_pressed():
-            skip()
+            porta.stop()
+            self.manager.skip()
             return
-        if not stop  and (porta == C or porta == D):
-            spike.light_matrix.show_image("TARGET")
-        elif not stop and (porta == motoreDestro or porta == motoreSinistro):
-            spike.light_matrix.show_image("PACMAN")
+        if not Manager.stop and (porta == C or porta == D):
+            self.spike.light_matrix.show_image("TARGET")
+        elif not Manager.stop and (porta == self.motoreDestro or porta == self.motoreSinistro):
+            self.spike.light_matrix.show_image("PACMAN")
         else:
             return
+        print(gradi)
+        gradi *= direzione
+        print(gradi)
         porta.run_for_degrees(gradi,velocità)
 
+    class PID:
+            def __init__(self,spike,manager,istanza):
+                self.spike = spike
+                self.manager = manager
+                self.movimenti = istanza
+                self.run_multithreading = True
+                self.runSmall = True
+                self.kp = 0
+                self.ki = 0
+                self.kd = 0
 
+            def calcoloVelocità(self,distanzaCompiuta,distanza,velocitàMax):
+                #kCurva = distanza/5
+                velocitàMin = 20 # minimo di 5-8 con fattore di sicurezza 150%
+                velocità = 0
+                """if distanzaCompiuta < kCurva:
+                    velocità = radice(((((distanzaCompiuta-kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-40)**2))+40
+                elif kCurva <= distanzaCompiuta <= distanza-kCurva:
+                    velocità = velocitàMax
+                elif distanza-kCurva<= distanzaCompiuta < distanza:
+                    velocità = (radice(((((distanzaCompiuta-distanza+kCurva)**2)/kCurva**2)-1)*(-(velocitàMax-30)**2))+30)"""
+                d = distanza
+                """d = distanza - (distanza/((distanza*8)/3004))
+                if distanzaCompiuta < d:
+                    velocità = cos((distanzaCompiuta+d/2)*(2*pi)/d)*((velocitàMax-velocitàMin)/2)+((velocitàMax+velocitàMin)/2)
+                elif d < distanzaCompiuta < distanza:
+                    velocità = velocitàMin"""
+                if distanzaCompiuta < distanza/2:
+                    velocitàMin = 40
+                if distanza > 1500:
+                    velocitàMax = 200
+                velocità = cos((distanzaCompiuta+d/2)*(2*pi)/d)*((velocitàMax-velocitàMin)/2)+((velocitàMax+velocitàMin)/2)
+                if velocità > 100:
+                    velocità = 100
+                #potrei frenare con velocità più bassa di quella necessaria a muoversi
+                return int(velocità)
 
-def decelerate(degrees,setdegrees): 
-    # potrebbe essere un idea migliore la radice
-    maxSpeed = 100
-    vIncrease = (maxSpeed-30)/2
-    vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
-    speed = cos(degrees*(pi/setdegrees))*vIncrease+vMove
-    print("Velocità della ruota dominante: " + str(speed))
-    return speed
+            def calcoloPID(self,velocità):
+                if self.spike.left_button.is_pressed():
+                    self.manager.skip()
+                    return
+                if velocità == 100:
+                    self.kp = 2.3
+                    self.ki = 4
+                    self.kd = 0.42
+                elif 100 > velocità >= 90:
+                    self.kp = 2.7
+                    self.ki = 4
+                    self.kd = 0.4
+                elif 90 > velocità >= 80:
+                    self.kp = 2.8
+                    self.ki = 3.8
+                    self.kd = 0.4
+                elif 80 > velocità >= 70:
+                    self.kp = 2.5
+                    self.ki = 3.6
+                    self.kd = 0.42
+                elif 70 > velocità >= 60:
+                    self.kp = 2.5
+                    self.ki = 3.6
+                    self.kd = 0.42
+                elif 60 > velocità >= 50:
+                    self.kp = 2.7
+                    self.ki = 3.4
+                    self.kd = 0.44
+                elif 50 > velocità >= 40:
+                    self.kp = 2.8
+                    self.ki = 3.3
+                    self.kd = 0.48
+                elif 40 > velocità :
+                    self.kp = 2.9
+                    self.ki = 3.3
+                    self.kd = 0.48
 
-def accelerate():  
-    pass  
-"""def map_range(x,in_min,in_max,out_min,out_max):
-    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min"""
-    
-def resetGyroValue():
-    global gyroValue, stop, spike
-    if spike.left_button.is_pressed():
-        skip()
-        return
-    spike.motion_sensor.reset_yaw_angle()
-    gyroValue = 0
+            def ottieniDistanzaCompiuta(self):
+                if self.spike.left_button.is_pressed():
+                    self.manager.skip()
+                    return
+                distanzaCompiuta = (abs(self.movimenti.motoreSinistro.get_degrees_counted() - self.movimenti.left_startValue) + abs(self.movimenti.motoreDestro.get_degrees_counted() - self.movimenti.right_startValue)) / 2
+                return distanzaCompiuta
 
-def calcoloPID(velocità):
-    global Kp
-    global Ki
-    global Kd
-    global gyroValue, stop, spike
-    if spike.left_button.is_pressed():
-        skip()
-        return
+            def avviaMotore(self,porta,gradi,velocità = 100):
+                while self.runSmall:
+                    if self.spike.left_button.is_pressed():
+                        self.manager.skip()
+                        return
+                    porta.set_degrees_counted(0)
 
-    if velocità >= 75:
-        Kp = 14
-        Ki = 0
-        Kd = 3
-    elif 40 <= velocità < 75:
-        Kp = 18.4
-        Ki = 0
-        Kd = 5
-    elif velocità < 40:
-        Kp = 28
-        Ki = 0.25
-        Kd = 1.5
+                    loop_small = True
+                    while loop_small:
+                        if spike.left_button.is_pressed():
+                            self.manager.skip()
+                            return
+                        distanzaPercorsa = porta.get_degrees_counted()
+                        porta.start_at_power(velocità)
+                        if (abs(distanzaPercorsa) > abs(gradi)):
+                            loop_small = False
+                        yield
 
-def avviaMotore(gradi, velocità, porta, spike):
-    global runSmall, run_multithreading, stop
+                    porta.stop()
+                    self.runSmall = False
+                    self.run_multithreading = False
+                yield
 
-    while runSmall:
-        if spike.left_button.is_pressed():
-            skip()
-            return
-        motor = Motor(porta)
-        motor.set_degrees_counted(0)
+    class Ciroscopio:
+        def __init__(self,spike,movement_motors,manager):
+            self.spike = spike
+            self.movement_motors = movement_motors
+            self.manager = manager
 
-        loop_small = True
-        while loop_small:
-            if spike.left_button.is_pressed():
-                skip()
-                return
-            distanzaPercorsa = motor.get_degrees_counted()
-            motor.start_at_power(velocità)
-            if (abs(distanzaPercorsa) > abs(gradi)):
-                loop_small = False
-            yield
+        def decelerate(self,degrees,setdegrees,maxSpeed):
+            vIncrease = (maxSpeed-30)/2
+            vMove = 30 + vIncrease # la posizione della cosinusoide risulta in funzione della velocità massima (opzionale ma figo) cos(x*b)*w +t
+            if not Manager.stop:
+                if self.spike.left_button.is_pressed():
+                    self.manager.skip()
+                    return
+                if degrees <= setdegrees-setdegrees/3 and setdegrees >= 30 and setdegrees < 260:
+                    speed = cos(degrees*(pi/(setdegrees-(setdegrees/3))))*vIncrease+vMove
+                elif setdegrees < 30 or 5 >= setdegrees - degrees:
+                    speed = 25
+                elif setdegrees > 260:
+                    speed = cos(degrees*(pi/(setdegrees)))*vIncrease+vMove
 
-        motor.stop()
-        runSmall = False
-        run_multithreading = False
-    yield
+                print("velocità" + str(speed))
+            return int(speed)
 
-def ottieniDistanzaCompiuta(data):
-    global stop, spike
-
-    if spike.left_button.is_pressed():
-        skip()
-        return
-
-    distanzaCompiuta = (
-                    abs(data.motoreSinistro.get_degrees_counted() - data.left_Startvalue) +
-                    abs(data.motoreDestro.get_degrees_counted() - data.right_Startvalue)) / 2
-
-    return distanzaCompiuta
-
-def normalize_angle(angle):
-    global stop, spike
-
-    if spike.left_button.is_pressed():
-        skip()
-        return
-
-    while angle > 180:
-        angle -= 360
-    while angle < -180:
-        angle += 360
-    return angle
-
-def wait(timer):
-    if spike.left_button.is_pressed():
-        print("Chiamo skip")
-        skip()
-        return
-    if not stop:
-        spike.light_matrix.show_image("TORTOISE")
-        time.sleep(timer)
+def race(program):
+    Manager.stop = False
+    print("Avvio missione " + str(program))
+    if program == 1:
+        # primo quadrato piccolo rosso da sinistra
+        mv.avanti(900)
+        mv.muoviMotore(D,300,85,direzione=1)
+    if program == 2:
+        # 2° piccolo da destra base blu |TMG :)
+        mv.avanti(300)
+        mv.ciroscopio(30,-1)
+        mv.avanti(1330)
+        mv.ciroscopio(30,-1,maxSpeed=30)
+        mv.avanti(500)
+        mv.ciroscopio(27,-1)
+        mv.avanti(800,-1,70)
+        mv.muoviMotore(C,200)
+        mv.ciroscopio(5,1)
+        mv.avanti(1600)
+        mv.muoviMotore(D,600,-1)
+        mv.avanti(500)
+        mv.muoviMotore(D,600)
+        mv.ciroscopio(20,-1)
+        mv.motoriMovimento(2500,-30)
+        exit()
+    if program == 3:
+        pass
+    if program == 4:
+        pass
+    if program == 5:
+        mv.avanti(2500)
+    if program == 6:
+        mv.avanti(3000)
+    if program == 7:
+        mv.avanti(3500)
+    if program == 8:
+        mv.avanti(4000)
     return
 
 
+<<<<<<< HEAD
 def race(program):
     mv = Movimenti(spike, 'A', 'B', movement_motors)
     global stop
@@ -567,3 +574,10 @@ def main():
 main()
 
 print("Normalmente questo messaggio non verrà mai visto")
+=======
+manager = Manager(spike)
+mv = Movimenti(spike,manager)
+manager.manager()
+
+print("FINE")
+>>>>>>> sviluppo
