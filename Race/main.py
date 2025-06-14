@@ -1,9 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # LEGO type:advanced slot:2
 import sys, time, hub
 from spike import PrimeHub, Motor, MotorPair, ColorSensor
 from hub import battery
 =======
+=======
+>>>>>>> 6edfaa0f780147df2119fc1c997fa87a44ae9a04
 # LEGO type:advanced slot:0 autostart
 from sys import exit
 import hub # type: ignore
@@ -12,9 +15,12 @@ from time import ticks_us
 from spike import PrimeHub, Motor, MotorPair # type: ignore
 from hub import battery # type: ignore
 from math import cos
+<<<<<<< HEAD
 from math import sqrt as radice
 from math import pi
 >>>>>>> sviluppo
+=======
+>>>>>>> 6edfaa0f780147df2119fc1c997fa87a44ae9a04
 
 C = Motor('C')
 D = Motor('D')
@@ -410,7 +416,11 @@ def race(program):
     print("Avvio missione " + str(program))
     if program == 1:
         mv.vaiDrittoPID(1300, 65)
+<<<<<<< HEAD
         mv.motoriMovimento(1600,0,-90)
+=======
+        mv.ciroscopio(90,1)
+>>>>>>> 6edfaa0f780147df2119fc1c997fa87a44ae9a04
         return
     if program == 2:
         #prendere il sub e portarlo a destinazione, cambiare base 2° fine da destra
@@ -573,6 +583,7 @@ def main():
             spike.status_light.on(colors[programma_selezionato-1])
 main()
 
+<<<<<<< HEAD
 print("Normalmente questo messaggio non verrà mai visto")
 =======
 manager = Manager(spike)
@@ -581,3 +592,6 @@ manager.manager()
 
 print("FINE")
 >>>>>>> sviluppo
+=======
+exit("Normalmente questo messaggio non verrà mai visto")
+>>>>>>> 6edfaa0f780147df2119fc1c997fa87a44ae9a04
