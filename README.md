@@ -43,6 +43,8 @@
 - [ ] Sistemare wait con time.time()
 - [ ] Finite la gui
 - [ ] Capire dov'è il Massachussets
+- [ ] sistema di "stallo voluto",andare avanti a bassa velocità finché il motore fisicamente non si blocca 
+- [ ] stall detection 
 
 ## Idee:
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
