@@ -45,7 +45,8 @@
 - [ ] Capire dov'è il Massachussets
 - [ ] sistema di "stallo voluto",andare avanti a bassa velocità finché il motore fisicamente non si blocca 
 - [ ] stall detection 
-- [ ] stabilire un archivio del gruppo 
+- [ ] stabilire un archivio del gruppo
+- [ ] aggiungere più prese di potenza al robot (verticale orizzontale ecc)
 
 ## Idee:
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
