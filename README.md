@@ -46,7 +46,7 @@
 - [ ] sistema di "stallo voluto",andare avanti a bassa velocità finché il motore fisicamente non si blocca 
 - [ ] stall detection 
 - [ ] stabilire un archivio del gruppo
-- [ ] aggiungere più prese di potenza al robot (verticale orizzontale ecc)
+- [ ] aggiungere più prese di potenza al robot (verticale orizzontale ecc)--> fare strutture con doppia presa di potenza per lo stesso braccio per stabilità ecc
 
 ## Idee:
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
