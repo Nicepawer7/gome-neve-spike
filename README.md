@@ -45,6 +45,7 @@
 - [ ] Capire dov'è il Massachussets
 - [ ] sistema di "stallo voluto",andare avanti a bassa velocità finché il motore fisicamente non si blocca 
 - [ ] stall detection 
+- [ ] stabilire un archivio del gruppo 
 
 ## Idee:
 - ~~Calibrare il pid con il metodo Zieger-Nichols~~ scartato
